@@ -189,6 +189,9 @@ namespace YARG.PlayMode {
 
 			// AMONG US
 			susTracker = new(Play.Instance.chart.beats);
+
+			// Queue entry animation
+			GetComponentInChildren<CameraPositioner>().QueueEntryAnimation();
 		}
 
 		private void Start() {
@@ -232,6 +235,7 @@ namespace YARG.PlayMode {
 			string spName = $"starpower_{player.chosenInstrument}";
 			string soloName = $"solo_{player.chosenInstrument}";
 			string fillName = $"fill_{player.chosenInstrument}";
+
 			// Solos and SP cannot share notes, so we can save some iteration time and only go start-to-end once overall
 			int spNoteIndex = 0;
 			int soloNoteIndex = 0;

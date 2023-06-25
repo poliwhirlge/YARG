@@ -6,25 +6,24 @@ using YARG.Settings;
 
 namespace YARG.PlayMode {
 	public class CameraPositioner : MonoBehaviour {
-		private static List<CameraPositioner> cameraPositioners = new List<CameraPositioner>();
-		private bool hasPlayedEntryAnimation = false; // Flag to track if the animation has played
+		private static readonly List<CameraPositioner> CameraPositioners = new();
+
+		private bool _entryAnimationQueued;
 
 		private void Start() {
-			cameraPositioners.Add(this);
+			CameraPositioners.Add(this);
 
 			UpdateAntiAliasing();
 
-			// Check if the entry animation has already played
-			if (!hasPlayedEntryAnimation) {
+			if (_entryAnimationQueued) {
 				StartCoroutine(PlayEntryAnimation());
-				hasPlayedEntryAnimation = true; // Set the flag to true after playing the animation
 			} else {
-				UpdatePosition(); // If the animation has already played, set the position directly
+				UpdatePosition();
 			}
 		}
 
 		private void OnDestroy() {
-			cameraPositioners.Remove(this);
+			CameraPositioners.Remove(this);
 		}
 
 		private void UpdateAntiAliasing() {
@@ -51,31 +50,27 @@ namespace YARG.PlayMode {
 			transform.localRotation = Quaternion.Euler(SettingsManager.Settings.TrackCamRot.Data, 0f, 0f);
 		}
 
-		private IEnumerator PlayEntryAnimation() {
-			// Hide the camera
-			GetComponent<Camera>().enabled = false;
+		public void QueueEntryAnimation() {
+			_entryAnimationQueued = true;
+		}
 
+		private IEnumerator PlayEntryAnimation() {
 			// Calculate the target position
 			float targetY = SettingsManager.Settings.TrackCamYPos.Data;
 			float targetZ = SettingsManager.Settings.TrackCamZPos.Data - 6f;
-			Vector3 targetPosition = new Vector3(0f, targetY, targetZ);
+			var targetPosition = new Vector3(0f, targetY, targetZ);
 
 			// Calculate the starting position (above the target)
-			Vector3 startingPosition = new Vector3(0f, targetY + 3f, targetZ + 5f); // Adjust the translation distance here
+			var startingPosition = new Vector3(0f, targetY + 3f, targetZ + 5f); // Adjust the translation distance here
 
 			// Store the final position before hiding the camera
-			Vector3 finalPosition = targetPosition;
+			var finalPosition = targetPosition;
 
 			// Set the camera position to the starting position
 			transform.localPosition = startingPosition;
 
-
-			// Show the camera
-			GetComponent<Camera>().enabled = true;
-
 			// Update the position and store the correct final position
 			UpdatePosition();
-			UpdateAllPosition();
 			finalPosition = transform.localPosition;
 
 			// Snap the camera to an initial position
@@ -104,13 +99,13 @@ namespace YARG.PlayMode {
 		}
 
 		public static void UpdateAllAntiAliasing() {
-			foreach (var cameraPositioner in cameraPositioners) {
+			foreach (var cameraPositioner in CameraPositioners) {
 				cameraPositioner.UpdateAntiAliasing();
 			}
 		}
 
 		public static void UpdateAllPosition() {
-			foreach (var cameraPositioner in cameraPositioners) {
+			foreach (var cameraPositioner in CameraPositioners) {
 				cameraPositioner.UpdatePosition();
 			}
 		}
