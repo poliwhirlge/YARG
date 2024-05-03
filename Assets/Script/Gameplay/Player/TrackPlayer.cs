@@ -71,7 +71,7 @@ namespace YARG.Gameplay.Player
 
         protected bool IsBass;
 
-        public virtual void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView, StemMixer mixer, int? currentHighScore)
+        public virtual void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView, StemMixer mixer, int? currentHighScore, EngineManager engineManager)
         {
             if (IsInitialized) return;
 
@@ -177,11 +177,11 @@ namespace YARG.Gameplay.Player
         private int _currentMultiplier;
         private int _previousMultiplier;
 
-        public override void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView, StemMixer mixer, int? currentHighScore)
+        public override void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView, StemMixer mixer, int? currentHighScore, EngineManager engineManager)
         {
             if (IsInitialized) return;
 
-            base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
+            base.Initialize(index, player, chart, trackView, mixer, currentHighScore, engineManager);
 
             SetupTheme(player.Profile.GameMode);
 
@@ -191,7 +191,7 @@ namespace YARG.Gameplay.Player
             NoteTrack = OriginalNoteTrack;
             Notes = NoteTrack.Notes;
 
-            Engine = CreateEngine();
+            Engine = CreateEngine(engineManager);
 
             if (GameManager.IsPractice)
             {
@@ -221,7 +221,7 @@ namespace YARG.Gameplay.Player
         }
 
         protected abstract InstrumentDifficulty<TNote> GetNotes(SongChart chart);
-        protected abstract TEngine CreateEngine();
+        protected abstract TEngine CreateEngine(EngineManager engineManager);
 
         protected virtual void FinishInitialization()
         {
@@ -356,7 +356,7 @@ namespace YARG.Gameplay.Player
             Beatlines = SyncTrack.Beatlines.Where(b => b.Tick >= start && b.Tick <= end).ToList();
             BeatlineIndex = 0;
 
-            Engine = CreateEngine();
+            Engine = CreateEngine(null);  // TODO figure out how to handle practice
 
             if (GameManager.IsPractice)
             {

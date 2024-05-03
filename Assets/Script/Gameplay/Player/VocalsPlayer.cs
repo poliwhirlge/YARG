@@ -53,7 +53,7 @@ namespace YARG.Gameplay.Player
         private int _phraseIndex = -1;
 
         public void Initialize(int index, YargPlayer player, SongChart chart,
-            VocalsPlayerHUD hud, VocalPercussionTrack percussionTrack)
+            VocalsPlayerHUD hud, VocalPercussionTrack percussionTrack, EngineManager engineManager)
         {
             if (IsInitialized) return;
 
@@ -89,7 +89,7 @@ namespace YARG.Gameplay.Player
                 _inputContext.Start();
             }
 
-            Engine = CreateEngine();
+            Engine = CreateEngine(engineManager);
 
             if (GameManager.IsPractice)
             {
@@ -108,7 +108,7 @@ namespace YARG.Gameplay.Player
             _inputContext?.Stop();
         }
 
-        protected VocalsEngine CreateEngine()
+        protected VocalsEngine CreateEngine(EngineManager engineManager)
         {
             if (!GameManager.IsReplay)
             {
@@ -125,7 +125,7 @@ namespace YARG.Gameplay.Player
             // The hit window can just be taken from the params
             HitWindow = EngineParams.HitWindow;
 
-            var engine = new YargVocalsEngine(NoteTrack, SyncTrack, EngineParams, Player.Profile.IsBot);
+            var engine = new YargVocalsEngine(NoteTrack, SyncTrack, EngineParams, engineManager, Player.Profile);
 
             engine.OnStarPowerPhraseHit += _ => OnStarPowerPhraseHit();
             engine.OnStarPowerStatus += OnStarPowerStatus;
@@ -414,7 +414,7 @@ namespace YARG.Gameplay.Player
 
             _phraseIndex = -1;
 
-            Engine = CreateEngine();
+            Engine = CreateEngine(null);
             ResetPracticeSection();
         }
 

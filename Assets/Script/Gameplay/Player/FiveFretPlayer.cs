@@ -3,6 +3,7 @@ using YARG.Audio;
 using YARG.Core;
 using YARG.Core.Audio;
 using YARG.Core.Chart;
+using YARG.Core.Engine;
 using YARG.Core.Engine.Guitar;
 using YARG.Core.Engine.Guitar.Engines;
 using YARG.Core.Input;
@@ -44,14 +45,14 @@ namespace YARG.Gameplay.Player
 
         private SongStem _stem;
 
-        public override void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView, StemMixer mixer, int? currentHighScore)
+        public override void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView, StemMixer mixer, int? currentHighScore, EngineManager engineManager)
         {
             _stem = player.Profile.CurrentInstrument.ToSongStem();
             if (_stem == SongStem.Bass && mixer[SongStem.Bass] == null)
             {
                 _stem = SongStem.Rhythm;
             }
-            base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
+            base.Initialize(index, player, chart, trackView, mixer, currentHighScore, engineManager);
         }
 
         protected override InstrumentDifficulty<GuitarNote> GetNotes(SongChart chart)
@@ -60,7 +61,7 @@ namespace YARG.Gameplay.Player
             return track.Difficulties[Player.Profile.CurrentDifficulty];
         }
 
-        protected override GuitarEngine CreateEngine()
+        protected override GuitarEngine CreateEngine(EngineManager engineManager)
         {
             // If on bass, replace the star multiplier threshold
             bool isBass = Player.Profile.CurrentInstrument == Instrument.FiveFretBass;
@@ -80,7 +81,7 @@ namespace YARG.Gameplay.Player
                 EngineParams = (GuitarEngineParameters) Player.EngineParameterOverride;
             }
 
-            var engine = new YargFiveFretEngine(NoteTrack, SyncTrack, EngineParams, Player.Profile.IsBot);
+            var engine = new YargFiveFretEngine(NoteTrack, SyncTrack, EngineParams, engineManager, Player.Profile);
 
             HitWindow = EngineParams.HitWindow;
 

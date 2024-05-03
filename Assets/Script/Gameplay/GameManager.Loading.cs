@@ -311,6 +311,7 @@ namespace YARG.Gameplay
             bool vocalTrackInitialized = false;
 
             int index = -1;
+            var engineManager = new Core.Engine.EngineManager(Chart);
             foreach (var player in YargPlayers)
             {
                 index++;
@@ -358,7 +359,7 @@ namespace YARG.Gameplay
                     var trackPlayer = playerObject.GetComponent<TrackPlayer>();
                     var trackView = _trackViewManager.CreateTrackView(trackPlayer, player);
                     var currentHighScore = ScoreContainer.GetHighScoreByInstrument(Song.Hash, player.Profile.CurrentInstrument)?.Score;
-                    trackPlayer.Initialize(index, player, Chart, trackView, _mixer, currentHighScore);
+                    trackPlayer.Initialize(index, player, Chart, trackView, _mixer, currentHighScore, engineManager);
                     _players.Add(trackPlayer);
                 }
                 else
@@ -386,7 +387,7 @@ namespace YARG.Gameplay
 
                     var playerHud = _trackViewManager.CreateVocalsPlayerHUD();
                     var percussionTrack = VocalTrack.CreatePercussionTrack();
-                    vocalsPlayer.Initialize(index, player, Chart, playerHud, percussionTrack);
+                    vocalsPlayer.Initialize(index, player, Chart, playerHud, percussionTrack, engineManager);
 
                     _players.Add(vocalsPlayer);
                 }

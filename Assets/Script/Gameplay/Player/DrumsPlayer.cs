@@ -5,6 +5,7 @@ using YARG.Audio;
 using YARG.Core;
 using YARG.Core.Audio;
 using YARG.Core.Chart;
+using YARG.Core.Engine;
 using YARG.Core.Engine.Drums;
 using YARG.Core.Engine.Drums.Engines;
 using YARG.Core.Game;
@@ -38,11 +39,11 @@ namespace YARG.Gameplay.Player
         public override int[] StarScoreThresholds { get; protected set; }
 
         public override void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView, StemMixer mixer,
-            int? currentHighScore)
+            int? currentHighScore, EngineManager engineManager)
         {
             // Before we do anything, see if we're in five lane mode or not
             _fiveLaneMode = player.Profile.CurrentInstrument == Instrument.FiveLaneDrums;
-            base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
+            base.Initialize(index, player, chart, trackView, mixer, currentHighScore, engineManager);
         }
 
         protected override InstrumentDifficulty<DrumNote> GetNotes(SongChart chart)
@@ -51,7 +52,7 @@ namespace YARG.Gameplay.Player
             return track.Difficulties[Player.Profile.CurrentDifficulty];
         }
 
-        protected override DrumsEngine CreateEngine()
+        protected override DrumsEngine CreateEngine(EngineManager engineManager)
         {
             var mode = Player.Profile.CurrentInstrument switch
             {
@@ -72,7 +73,7 @@ namespace YARG.Gameplay.Player
                 EngineParams = (DrumsEngineParameters) Player.EngineParameterOverride;
             }
 
-            var engine = new YargDrumsEngine(NoteTrack, SyncTrack, EngineParams, Player.Profile.IsBot);
+            var engine = new YargDrumsEngine(NoteTrack, SyncTrack, EngineParams, engineManager, Player.Profile);
 
             HitWindow = EngineParams.HitWindow;
 
