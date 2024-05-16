@@ -66,6 +66,25 @@ namespace YARG.Menu.MusicLibrary
             }
         }
 
+        public void SetParamsDirect(string assetName, float alpha)
+        {
+            // Set instrument icon
+            var icon = Addressables.LoadAssetAsync<Sprite>($"InstrumentIcons[{assetName}]").WaitForCompletion();
+            _instrumentIcon.sprite = icon;
+            _ringSprite.sprite = _ringSprites[0];
+
+            // Set instrument opacity
+            Color color = _instrumentIcon.color;
+            color.a = alpha;
+            _instrumentIcon.color = color;
+        }
+
+        public void SetColor(Color c)
+        {
+            // Set instrument opacity
+            _instrumentIcon.color = c;
+        }
+
         private void SearchFilter(string instrument)
         {
             _songSearchingField.SetSearchInput(SongAttribute.Instrument, instrument);

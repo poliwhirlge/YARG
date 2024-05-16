@@ -55,6 +55,9 @@ namespace YARG.Gameplay
         [SerializeField]
         private TextMeshProUGUI _debugText;
 
+        [SerializeField]
+        private UnisonNotification _unisonNotification;
+
         /// <summary>
         /// Equal to either <see cref="PlayerContainer.Players"/> or the players in the replay.
         /// </summary>

@@ -312,6 +312,11 @@ namespace YARG.Gameplay
 
             int index = -1;
             var engineManager = new Core.Engine.EngineManager(Chart);
+            engineManager.OnUnisonPhraseStart += _unisonNotification.OnUnisonPhraseStart;
+            engineManager.OnUnisonPhraseEnd += _unisonNotification.OnUnisonPhraseEnd;
+            engineManager.OnUnisonPhraseFail += _unisonNotification.OnUnisonPhraseFail;
+            engineManager.OnUnisonPhraseComplete += _unisonNotification.OnUnisonPhraseComplete;
+            engineManager.OnUnisonPhraseAward += _unisonNotification.OnUnisonPhraseAward;
             foreach (var player in YargPlayers)
             {
                 index++;
