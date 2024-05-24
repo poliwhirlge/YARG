@@ -232,6 +232,15 @@ namespace YARG.Scores
             }
         }
 
+        public static List<PlayerScoreRecord> GetHighScoresByInstrumentAndDifficulty(HashWrapper songChecksum)
+        {
+            var query = $"SELECT *, MAX(Score) FROM PlayerScores " +
+                        $"INNER JOIN GameRecords ON PlayerScores.GameRecordId = GameRecords.Id " +
+                        $"WHERE GameRecords.SongChecksum = x'{songChecksum.ToString()}' " +
+                        $"GROUP BY GameRecords.SongChecksum, Instrument, Difficulty";
+            return _db.Query<PlayerScoreRecord>(query);
+        }
+
         public class LineCountContainer
         {
             public int Count { get; set; }

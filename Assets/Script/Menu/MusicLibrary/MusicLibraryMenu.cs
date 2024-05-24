@@ -113,8 +113,16 @@ namespace YARG.Menu.MusicLibrary
                     }),
                 new NavigationScheme.Entry(MenuAction.Green, "Confirm",
                     () => CurrentSelection?.PrimaryButtonClick()),
-
                 new NavigationScheme.Entry(MenuAction.Red, "Back", Back),
+                new NavigationScheme.Entry(MenuAction.Yellow, "More Info",
+                    () => {
+                        if (_currentSong is null)
+                            return;
+
+                        GlobalVariables.State.CurrentSong = _currentSong;
+                        var menu = MenuManager.Instance.PushMenu(MenuManager.Menu.MoreInfo, false);
+                        menu.gameObject.SetActive(true);
+                    }),
                 new NavigationScheme.Entry(MenuAction.Blue, "Search",
                     () => _searchField.Focus()),
                 new NavigationScheme.Entry(MenuAction.Orange, "<align=left><size=80%>More Options<br>(Hold) Navigate Sections</size></align>",
