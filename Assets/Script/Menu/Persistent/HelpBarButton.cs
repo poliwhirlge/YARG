@@ -26,12 +26,19 @@ namespace YARG.Menu.Persistent
         private NavigationScheme.Entry? _entry;
 
         private Color _buttonBackgroundColor;
+        private Color _buttonImageColor;
+        private Color _buttonBackgroundColorOnHover;
 
         public void SetInfoFromSchemeEntry(NavigationScheme.Entry entry)
         {
             _entry = entry;
             var icons = MenuData.NavigationIcons;
             _buttonBackgroundColor = icons.GetColor(entry.Action);
+            _buttonBackgroundColor.a = 0.2f;
+            _buttonBackgroundColorOnHover = icons.GetColor(entry.Action);
+            _buttonBackgroundColorOnHover.a = 0.4f;
+            _buttonImageColor = icons.GetColor(entry.Action);
+            _buttonImageColor.a = 1f;
 
             // Label
             _buttonLabel.text = entry.DisplayName;
@@ -46,15 +53,15 @@ namespace YARG.Menu.Persistent
 
             // Set colors
             _buttonImage.sprite = icons.GetIcon(entry.Action);
-            _buttonImage.color = _buttonBackgroundColor;
+            _buttonImage.color = _buttonImageColor;
             _buttonBackground.color = Color.clear;
             _buttonText.color = Color.white;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            _buttonBackground.color = _buttonBackgroundColor;
-            _buttonImage.color = _buttonBackgroundColor;
+            _buttonBackground.color = _buttonBackgroundColorOnHover;
+            _buttonImage.color = _buttonImageColor;
             _buttonLabel.color = Color.white;
             _buttonText.color = Color.white;
         }
@@ -62,7 +69,7 @@ namespace YARG.Menu.Persistent
         public void OnPointerExit(PointerEventData eventData)
         {
             _buttonBackground.color = Color.clear;
-            _buttonImage.color = _buttonBackgroundColor;
+            _buttonImage.color = _buttonImageColor;
             _buttonLabel.color = Color.white;
             _buttonText.color = Color.white;
         }
