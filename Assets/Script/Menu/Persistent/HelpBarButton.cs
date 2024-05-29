@@ -14,6 +14,8 @@ namespace YARG.Menu.Persistent
         private Image _buttonImage;
         [SerializeField]
         private Image _buttonBackground;
+        [SerializeField]
+        private Image _buttonOutline;
 
         [SerializeField]
         private Button _button;
@@ -56,14 +58,16 @@ namespace YARG.Menu.Persistent
             _buttonImage.color = _buttonImageColor;
             _buttonBackground.color = Color.clear;
             _buttonText.color = Color.white;
+            _buttonOutline.color = Color.clear;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            _buttonBackground.color = _buttonBackgroundColorOnHover;
+            _buttonBackground.color = _buttonBackgroundColor;
             _buttonImage.color = _buttonImageColor;
             _buttonLabel.color = Color.white;
             _buttonText.color = Color.white;
+            _buttonOutline.color = _buttonBackgroundColor;
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -72,6 +76,7 @@ namespace YARG.Menu.Persistent
             _buttonImage.color = _buttonImageColor;
             _buttonLabel.color = Color.white;
             _buttonText.color = Color.white;
+            _buttonOutline.color = Color.clear;
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -80,6 +85,7 @@ namespace YARG.Menu.Persistent
             _buttonImage.color = Color.grey;
             _buttonLabel.color = Color.grey;
             _buttonText.color = Color.grey;
+            _buttonOutline.color = Color.grey;
 
             _entry?.Invoke();
         }
