@@ -67,9 +67,11 @@ namespace YARG.Menu.MusicLibrary
         private GameObject _noPlayerWarning;
         [SerializeField]
         private PopupMenu _popupMenu;
+        [SerializeField]
+        private MoreInfoMenu _moreInfoMenu;
 
         protected override int ExtraListViewPadding => 15;
-        protected override bool CanScroll => !_popupMenu.gameObject.activeSelf;
+        protected override bool CanScroll => !_popupMenu.gameObject.activeSelf && !_moreInfoMenu.gameObject.activeSelf;
 
         private IReadOnlyList<SongCategory> _sortedSongs;
 
@@ -115,6 +117,16 @@ namespace YARG.Menu.MusicLibrary
                     () => CurrentSelection?.PrimaryButtonClick()),
 
                 new NavigationScheme.Entry(MenuAction.Red, "Back", Back),
+                new NavigationScheme.Entry(MenuAction.Yellow, "More Info", () =>
+                {
+                    if (_currentSong == null)
+                    {
+                        return;
+                    }
+                    
+                    GlobalVariables.State.CurrentSong = _currentSong;
+                    _moreInfoMenu.gameObject.SetActive(true);
+                }),
                 new NavigationScheme.Entry(MenuAction.Blue, "Search",
                     () => _searchField.Focus()),
                 new NavigationScheme.Entry(MenuAction.Orange, "<align=left><size=80%>More Options<br>(Hold) Navigate Sections</size></align>",

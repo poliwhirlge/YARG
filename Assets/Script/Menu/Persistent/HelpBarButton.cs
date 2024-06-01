@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using YARG.Core.Input;
 using YARG.Menu.Data;
 using YARG.Menu.Navigation;
+using YARG.Core.Logging;
 
 namespace YARG.Menu.Persistent
 {
@@ -63,6 +64,7 @@ namespace YARG.Menu.Persistent
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            YargLogger.LogFormatInfo("{0} pointer enter", _entry?.Action);
             _buttonBackground.color = _buttonBackgroundColor;
             _buttonImage.color = _buttonImageColor;
             _buttonLabel.color = Color.white;
