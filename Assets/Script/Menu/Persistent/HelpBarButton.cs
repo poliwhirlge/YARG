@@ -26,6 +26,15 @@ namespace YARG.Menu.Persistent
         [SerializeField]
         private TextMeshProUGUI _buttonText;
 
+        public enum HelpButtonStyle
+        {
+            Default,
+            Filled
+        }
+
+        [SerializeField]
+        private HelpButtonStyle _buttonStyle;
+
         private NavigationScheme.Entry? _entry;
 
         private Color _buttonBackgroundColor;
@@ -57,9 +66,18 @@ namespace YARG.Menu.Persistent
             // Set colors
             _buttonImage.sprite = icons.GetIcon(entry.Action);
             _buttonImage.color = _buttonImageColor;
-            _buttonBackground.color = Color.clear;
             _buttonText.color = Color.white;
-            _buttonOutline.color = Color.clear;
+            if (_buttonStyle == HelpButtonStyle.Default)
+            {
+                _buttonBackground.color = Color.clear;
+                _buttonOutline.color = Color.clear;
+            }
+            else
+            {
+                _buttonBackground.color = _buttonBackgroundColor;
+                _buttonOutline.color = _buttonBackgroundColor;
+            }
+            
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -70,6 +88,16 @@ namespace YARG.Menu.Persistent
             _buttonLabel.color = Color.white;
             _buttonText.color = Color.white;
             _buttonOutline.color = _buttonBackgroundColor;
+            if (_buttonStyle == HelpButtonStyle.Default)
+            {
+                _buttonBackground.color = _buttonBackgroundColor;
+                _buttonOutline.color = _buttonBackgroundColor;
+            }
+            else
+            {
+                _buttonBackground.color = _buttonBackgroundColorOnHover;
+                _buttonOutline.color = _buttonBackgroundColorOnHover;
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -79,6 +107,16 @@ namespace YARG.Menu.Persistent
             _buttonLabel.color = Color.white;
             _buttonText.color = Color.white;
             _buttonOutline.color = Color.clear;
+            if (_buttonStyle == HelpButtonStyle.Default)
+            {
+                _buttonBackground.color = Color.clear;
+                _buttonOutline.color = Color.clear;
+            }
+            else
+            {
+                _buttonBackground.color = _buttonBackgroundColor;
+                _buttonOutline.color = _buttonBackgroundColor;
+            }
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -94,6 +132,22 @@ namespace YARG.Menu.Persistent
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            _buttonBackground.color = Color.clear;
+            _buttonImage.color = _buttonImageColor;
+            _buttonLabel.color = Color.white;
+            _buttonText.color = Color.white;
+            _buttonOutline.color = Color.clear;
+            if (_buttonStyle == HelpButtonStyle.Default)
+            {
+                _buttonBackground.color = Color.clear;
+                _buttonOutline.color = Color.clear;
+            }
+            else
+            {
+                _buttonBackground.color = _buttonBackgroundColor;
+                _buttonOutline.color = _buttonBackgroundColor;
+            }
+
             _entry?.InvokeHoldOffHandler();
         }
     }

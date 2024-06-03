@@ -4,6 +4,7 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using YARG.Core;
 using YARG.Core.Input;
 using YARG.Core.Logging;
 using YARG.Core.Song;
@@ -53,8 +54,8 @@ namespace YARG.Menu.MusicLibrary
         // [SerializeField]
         // private Transform _menuItemContainer;
         [Space]
-        //[SerializeField]
-        //private NavigationGroup _navGroup;
+        [SerializeField]
+        private NavigationGroup _instrumentSelectNavGroup;
         [SerializeField]
         private HelpBarButton _redButton;
         [SerializeField]
@@ -66,6 +67,8 @@ namespace YARG.Menu.MusicLibrary
         [SerializeField]
         private Transform _difficultyRingsTopContainer;
         [SerializeField]
+        private Transform _difficultyRingsMiddleContainer;
+        [SerializeField]
         private Transform _difficultyRingsBottomContainer;
 
         [Space]
@@ -74,22 +77,28 @@ namespace YARG.Menu.MusicLibrary
         [SerializeField]
         private Transform _scoreViewContainer;
 
+        [Space]
+        [SerializeField]
+        private GameObject _buttonPrefab;
+        [SerializeField]
+        private Transform _instrumentDifficultyButtonsContainer;
+
         [Space]        
         [SerializeField]
         private NavigatableButton _playButton;
         [SerializeField]
         private NavigatableButton _practiceButton;
 
+        [Space]
+        [SerializeField]
+        private Image _bandDifficultyBar;
+        [SerializeField]
+        private TextMeshProUGUI _bandDifficultyLabel;
+
         private readonly List<DifficultyRing> _difficultyRings = new();
 
         private readonly List<MoreInfoScoreView> _scoreViews = new();
 
-        // [Space]
-        // [SerializeField]
-        // private GameObject _instrumentHeaderPrefab;
-        // [SerializeField]
-        // private Transform _instrumentHeaderContainer;
-        // private List<InstrumentHeader> _instrumentHeaderList = new ();
         private int _instrumentIdx = 0;
 
         private CancellationTokenSource _cancellationToken;
@@ -100,7 +109,6 @@ namespace YARG.Menu.MusicLibrary
         {
             Initialize();
         }
-
 
         public void Initialize()
         {
@@ -144,15 +152,114 @@ namespace YARG.Menu.MusicLibrary
 
             for (int i = 0; i < 5; ++i)
             {
-                var go = Instantiate(_difficultyRingPrefab, _difficultyRingsBottomContainer);
+                var go = Instantiate(_difficultyRingPrefab, _difficultyRingsMiddleContainer);
                 _difficultyRings.Add(go.GetComponent<DifficultyRing>());
             }
 
-            for (int i = 0; i < 5; ++i)
+            // for (int i = 0; i < 5; ++i)
+            // {
+            //     var go = Instantiate(_difficultyRingPrefab, _difficultyRingsBottomContainer);
+            //     _difficultyRings.Add(go.GetComponent<DifficultyRing>());
+            // }
+
+            for (int i = 0; i < 3; ++i)
             {
                 var go = Instantiate(_scoreViewPrefab, _scoreViewContainer);
                 _scoreViews.Add(go.GetComponent<MoreInfoScoreView>());
             }
+        }
+
+        private void UpdateDifficulties()
+        {
+            var entry = _currentSong;
+            // Show all difficulty rings
+            foreach (var difficultyRing in _difficultyRings)
+            {
+                difficultyRing.gameObject.SetActive(true);
+            }
+
+            /*
+                Guitar               ; Bass               ; 4 lane      ; Keys     ; Mic
+                Pro Guitar           ; Pro Bass           ; True Drums  ; Pro Keys ; Harmonies
+                Co-op                ; Rhythm             ; GH Drums
+            */
+
+            _difficultyRings[0].SetInfo("guitar", "FiveFretGuitar", entry[Instrument.FiveFretGuitar]);
+            _difficultyRings[1].SetInfo("bass", "FiveFretBass", entry[Instrument.FiveFretBass]);
+            _difficultyRings[2].SetInfo("drums", "FourLaneDrums", entry[Instrument.FourLaneDrums]);
+
+            // 5-lane or 4-lane
+            // if (entry.HasInstrument(Instrument.FiveLaneDrums))
+            // {
+            //     _difficultyRings[2].SetInfo("ghDrums", "FiveLaneDrums", entry[Instrument.FiveLaneDrums]);
+            // }
+
+            _difficultyRings[3].SetInfo("keys", "Keys", entry[Instrument.Keys]);
+            _difficultyRings[4].SetInfo("vocals", "Vocals", entry[Instrument.Vocals]);
+
+            // if (entry.HasInstrument(Instrument.Harmony))
+            // {
+            //     _difficultyRings[4].SetInfo(
+            //         entry.VocalsCount switch
+            //         {
+            //             2 => "twoVocals",
+            //             >= 3 => "harmVocals",
+            //             _ => "vocals"
+            //         },
+            //         "Harmony",
+            //         entry[Instrument.Harmony]
+            //     );
+            // }
+            // else
+            // {
+                
+            // }
+
+            _difficultyRings[5].SetInfo("realGuitar", "ProGuitar", entry[Instrument.ProGuitar_17Fret]);
+
+            // Protar or Co-op
+            // if (entry.HasInstrument(Instrument.ProGuitar_17Fret) || entry.HasInstrument(Instrument.ProGuitar_22Fret))
+            // {
+            //     var values = entry[Instrument.ProGuitar_17Fret];
+            //     if (values.Intensity == -1)
+            //         values = entry[Instrument.ProGuitar_22Fret];
+            //     _difficultyRings[5].SetInfo("realGuitar", "ProGuitar", values);
+            // }
+            // else
+            // {
+            //     _difficultyRings[5].SetInfo("guitarCoop", "FiveFretCoopGuitar", entry[Instrument.FiveFretCoopGuitar]);
+            // }
+
+            _difficultyRings[6].SetInfo("realBass", "ProBass", entry[Instrument.ProBass_17Fret]);
+
+            // ProBass or Rhythm
+            // if (entry.HasInstrument(Instrument.ProBass_17Fret) || entry.HasInstrument(Instrument.ProBass_22Fret))
+            // {
+            //     var values = entry[Instrument.ProBass_17Fret];
+            //     if (values.Intensity == -1)
+            //         values = entry[Instrument.ProBass_22Fret];
+            //     _difficultyRings[6].SetInfo("realBass", "ProBass", values);
+            // }
+            // else
+            // {
+            //     _difficultyRings[6].SetInfo("rhythm", "FiveFretRhythm", entry[Instrument.FiveFretRhythm]);
+            // }
+
+            _difficultyRings[7].SetInfo("trueDrums", "TrueDrums", PartValues.Default);
+            _difficultyRings[8].SetInfo("realKeys", "ProKeys", entry[Instrument.ProKeys]);
+            _difficultyRings[9].SetInfo(
+                entry.VocalsCount switch
+                {
+                    2 => "twoVocals",
+                    >= 3 => "harmVocals",
+                    _ => "vocals"
+                },
+                "Harmony",
+                entry[Instrument.Harmony]
+            );
+
+            _bandDifficultyLabel.text = entry[Instrument.Band].Intensity == -1 ? "-" : entry[Instrument.Band].Intensity.ToString();
+            _bandDifficultyBar.fillAmount = Math.Clamp((float) entry[Instrument.Band].Intensity / 5, 0, 1);
         }
         
         private void OnEnable()
@@ -215,9 +322,42 @@ namespace YARG.Menu.MusicLibrary
                 _loadingPhrase.text = _currentSong.LoadingPhrase;
             }
 
-            // _infoContainers.SelectInstrument(_instrumentIdx);
+            UpdateDifficulties();
+            UpdateInstrumentSelectionButtons();
             LoadSourceIcons();
             LoadAlbumCover();
+        }
+
+        private void CreateInstrumentButton(string buttonText, Instrument instrument)
+        {
+            if (_currentSong[instrument].WasParsed())
+            {
+                var go = Instantiate(_buttonPrefab, _instrumentDifficultyButtonsContainer);
+                var button = go.GetComponent<MoreInfoMenuButton>();
+                button.Text.text = buttonText;
+                button.Text.fontSize = 22;
+                button._icon.gameObject.SetActive(false);
+                _instrumentSelectNavGroup.AddNavigatable(go.GetComponent<NavigatableBehaviour>());
+            }
+        }
+
+        private void UpdateInstrumentSelectionButtons()
+        {
+            _instrumentDifficultyButtonsContainer.DestroyChildren();
+            _instrumentSelectNavGroup.ClearNavigatables();
+
+            CreateInstrumentButton("Guitar", Instrument.FiveFretGuitar);
+            CreateInstrumentButton("Bass", Instrument.FiveFretBass);
+            CreateInstrumentButton("Drums", Instrument.FourLaneDrums);
+            CreateInstrumentButton("Vocals", Instrument.Vocals);
+            CreateInstrumentButton("Keys", Instrument.Keys);
+            CreateInstrumentButton("Pro Guitar", Instrument.ProGuitar_17Fret);
+            CreateInstrumentButton("Pro Bass", Instrument.ProBass_17Fret);
+            CreateInstrumentButton("Pro Drums", Instrument.ProDrums);
+            CreateInstrumentButton("Pro Keys", Instrument.ProKeys);
+            CreateInstrumentButton("Rhythm", Instrument.FiveFretRhythm);
+            CreateInstrumentButton("Co-op", Instrument.FiveFretCoopGuitar);
+            CreateInstrumentButton("5 Lane Drums", Instrument.FiveLaneDrums);
         }
 
         private void OnDisable()
