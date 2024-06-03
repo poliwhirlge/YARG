@@ -82,6 +82,8 @@ namespace YARG.Menu.MusicLibrary
         private GameObject _buttonPrefab;
         [SerializeField]
         private Transform _instrumentDifficultyButtonsContainer;
+        [SerializeField]
+        private Transform _menuButtonsContainer;
 
         [Space]        
         [SerializeField]
@@ -273,7 +275,10 @@ namespace YARG.Menu.MusicLibrary
             {
                 gameObject.SetActive(false);
             });
-            var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Change Instrument", () => {});
+            var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Change Instrument", () =>
+            {
+                _instrumentSelectNavGroup.SelectNext();
+            });
 
             Navigator.Instance.PushScheme(new NavigationScheme(new()
             {
@@ -335,9 +340,14 @@ namespace YARG.Menu.MusicLibrary
                 var go = Instantiate(_buttonPrefab, _instrumentDifficultyButtonsContainer);
                 var button = go.GetComponent<MoreInfoMenuButton>();
                 button.Text.text = buttonText;
-                button.Text.fontSize = 22;
-                button._icon.gameObject.SetActive(false);
-                _instrumentSelectNavGroup.AddNavigatable(go.GetComponent<NavigatableBehaviour>());
+                //button.Text.fontSize = 22;
+                button.Text.fontSizeMax = 22;
+                button.Icon.gameObject.SetActive(false);
+                button.Button.SetOnClickEvent(() =>
+                {
+                    YargLogger.LogInfo(button.Text.text);
+                });
+                _instrumentSelectNavGroup.AddNavigatable(button.Button);
             }
         }
 
