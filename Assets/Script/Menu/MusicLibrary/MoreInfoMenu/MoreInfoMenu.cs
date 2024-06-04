@@ -13,6 +13,7 @@ using YARG.Menu;
 using YARG.Menu.MusicLibrary;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
+using YARG.Scores;
 using YARG.Song;
 
 namespace YARG.Menu.MusicLibrary
@@ -100,12 +101,14 @@ namespace YARG.Menu.MusicLibrary
         private readonly List<DifficultyRing> _difficultyRings = new();
 
         private readonly List<MoreInfoScoreView> _scoreViews = new();
-
-        private int _instrumentIdx = 0;
+        private Instrument[] _activeInstruments = new Instrument[12];
+        private int _idx = 0;
 
         private CancellationTokenSource _cancellationToken;
         private CancellationTokenSource _cancellationToken2;
         private SongEntry _currentSong;
+        private List<PlayerScoreRecord> _scores;
+        private List<PlayerInfoRecord> _players;
 
         public void Awake()
         {
@@ -164,11 +167,13 @@ namespace YARG.Menu.MusicLibrary
             //     _difficultyRings.Add(go.GetComponent<DifficultyRing>());
             // }
 
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 5; ++i)
             {
                 var go = Instantiate(_scoreViewPrefab, _scoreViewContainer);
                 _scoreViews.Add(go.GetComponent<MoreInfoScoreView>());
             }
+
+            _instrumentSelectNavGroup.SelectionChanged += UpdateDisplayedScores;
         }
 
         private void UpdateDifficulties()
@@ -277,7 +282,14 @@ namespace YARG.Menu.MusicLibrary
             });
             var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Change Instrument", () =>
             {
-                _instrumentSelectNavGroup.SelectNext();
+                if (_instrumentSelectNavGroup.SelectedIndex == _instrumentSelectNavGroup.Count - 1)
+                {
+                    _instrumentSelectNavGroup.SelectFirst();
+                }
+                else
+                {
+                    _instrumentSelectNavGroup.SelectNext();
+                }
             });
 
             Navigator.Instance.PushScheme(new NavigationScheme(new()
@@ -329,8 +341,17 @@ namespace YARG.Menu.MusicLibrary
 
             UpdateDifficulties();
             UpdateInstrumentSelectionButtons();
+            FetchScores();
+            _instrumentSelectNavGroup.SelectFirst();
             LoadSourceIcons();
             LoadAlbumCover();
+        }
+
+        private void FetchScores()
+        {
+            _scores = ScoreContainer.GetHighScoresByInstrumentAndDifficulty(_currentSong.Hash);
+            YargLogger.LogInfo($"Fetched {_scores.Count} scores");
+            _players = ScoreContainer.GetAllPlayers();
         }
 
         private void CreateInstrumentButton(string buttonText, Instrument instrument)
@@ -340,19 +361,17 @@ namespace YARG.Menu.MusicLibrary
                 var go = Instantiate(_buttonPrefab, _instrumentDifficultyButtonsContainer);
                 var button = go.GetComponent<MoreInfoMenuButton>();
                 button.Text.text = buttonText;
-                //button.Text.fontSize = 22;
                 button.Text.fontSizeMax = 22;
                 button.Icon.gameObject.SetActive(false);
-                button.Button.SetOnClickEvent(() =>
-                {
-                    YargLogger.LogInfo(button.Text.text);
-                });
                 _instrumentSelectNavGroup.AddNavigatable(button.Button);
+                _activeInstruments[_idx] = instrument;
+                _idx++;
             }
         }
 
         private void UpdateInstrumentSelectionButtons()
         {
+            _idx = 0;
             _instrumentDifficultyButtonsContainer.DestroyChildren();
             _instrumentSelectNavGroup.ClearNavigatables();
 
@@ -368,6 +387,30 @@ namespace YARG.Menu.MusicLibrary
             CreateInstrumentButton("Rhythm", Instrument.FiveFretRhythm);
             CreateInstrumentButton("Co-op", Instrument.FiveFretCoopGuitar);
             CreateInstrumentButton("5 Lane Drums", Instrument.FiveLaneDrums);
+        }
+
+        private void UpdateDisplayedScores(NavigatableBehaviour selected, SelectionOrigin selectionOrigin)
+        {
+            var selectedIndex = _instrumentSelectNavGroup.SelectedIndex;
+
+            if (selectedIndex == null)
+                return;
+            
+            var instrument = _activeInstruments[(int) selectedIndex];
+            foreach (var scoreView in _scoreViews)
+            {
+                scoreView.ResetScore();
+            }
+
+            foreach (var _score in _scores)
+            {
+                if (_score.Instrument == instrument)
+                {
+                    YargLogger.LogInfo($"Found score {_score.Instrument} {_score.Score} {_score.Difficulty}");
+                    var scoreView = _scoreViews[(int) _score.Difficulty - 1];
+                    scoreView.SetScore(_score);
+                }
+            }
         }
 
         private void OnDisable()

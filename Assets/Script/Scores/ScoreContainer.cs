@@ -247,6 +247,39 @@ namespace YARG.Scores
             return null;
         }
 
+        public static List<PlayerScoreRecord> GetHighScoresByInstrumentAndDifficulty(HashWrapper songChecksum)
+        {
+            try
+            {
+                var query = $"SELECT *, MAX(Score) FROM PlayerScores " +
+                            $"INNER JOIN GameRecords ON PlayerScores.GameRecordId = GameRecords.Id " +
+                            $"WHERE GameRecords.SongChecksum = x'{songChecksum.ToString()}' " +
+                            $"GROUP BY GameRecords.SongChecksum, Instrument, Difficulty";
+                return _db.Query<PlayerScoreRecord>(query);
+            }
+            catch (Exception e)
+            {
+                YargLogger.LogException(e, "Failed to load high score by instrument and difficulty from database.");
+            }
+
+            return null;
+        }
+
+        public static List<PlayerInfoRecord> GetAllPlayers()
+        {
+            try
+            {
+                var query = $"SELECT * FROM Players";
+                return _db.Query<PlayerInfoRecord>(query);
+            }
+            catch (Exception e)
+            {
+                YargLogger.LogException(e, "Failed to load players from database.");
+            }
+
+            return null;
+        }
+
         public static List<SongEntry> GetMostPlayedSongs(int maxCount)
         {
             try
