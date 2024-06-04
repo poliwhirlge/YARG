@@ -9,8 +9,6 @@ using YARG.Core.Input;
 using YARG.Core.Logging;
 using YARG.Core.Song;
 using YARG.Helpers.Extensions;
-using YARG.Menu;
-using YARG.Menu.MusicLibrary;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
 using YARG.Scores;
@@ -104,11 +102,15 @@ namespace YARG.Menu.MusicLibrary
         private Instrument[] _activeInstruments = new Instrument[12];
         private int _idx = 0;
 
+        private List<Difficulty> _displayedDifficulties = new List<Difficulty>
+        {
+            Difficulty.Easy, Difficulty.Medium, Difficulty.Hard, Difficulty.Expert, Difficulty.ExpertPlus
+        };
+
         private CancellationTokenSource _cancellationToken;
         private CancellationTokenSource _cancellationToken2;
         private SongEntry _currentSong;
         private List<PlayerScoreRecord> _scores;
-        private List<PlayerInfoRecord> _players;
 
         public void Awake()
         {
@@ -167,10 +169,12 @@ namespace YARG.Menu.MusicLibrary
             //     _difficultyRings.Add(go.GetComponent<DifficultyRing>());
             // }
 
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < _displayedDifficulties.Count; ++i)
             {
                 var go = Instantiate(_scoreViewPrefab, _scoreViewContainer);
-                _scoreViews.Add(go.GetComponent<MoreInfoScoreView>());
+                var scoreView = go.GetComponent<MoreInfoScoreView>();
+                _scoreViews.Add(scoreView);
+                scoreView.Initialize(_displayedDifficulties[i]);
             }
 
             _instrumentSelectNavGroup.SelectionChanged += UpdateDisplayedScores;
@@ -271,11 +275,6 @@ namespace YARG.Menu.MusicLibrary
         
         private void OnEnable()
         {
-            //_navGroup.ClearNavigatables();
-
-            // _navGroup.AddNavigatable(_playButton);
-            // _navGroup.AddNavigatable(_practiceButton);
-
             var redEntry = new NavigationScheme.Entry(MenuAction.Red, "Back", () =>
             {
                 gameObject.SetActive(false);
@@ -351,7 +350,6 @@ namespace YARG.Menu.MusicLibrary
         {
             _scores = ScoreContainer.GetHighScoresByInstrumentAndDifficulty(_currentSong.Hash);
             YargLogger.LogInfo($"Fetched {_scores.Count} scores");
-            _players = ScoreContainer.GetAllPlayers();
         }
 
         private void CreateInstrumentButton(string buttonText, Instrument instrument)
@@ -397,20 +395,48 @@ namespace YARG.Menu.MusicLibrary
                 return;
             
             var instrument = _activeInstruments[(int) selectedIndex];
-            foreach (var scoreView in _scoreViews)
+            for (int i = 0; i < _displayedDifficulties.Count; ++i)
             {
-                scoreView.ResetScore();
+                if (HasPlayableDifficulty(_currentSong, instrument, _displayedDifficulties[i]))
+                {
+                    _scoreViews[i].ResetScore();
+                }
+                else
+                {
+                    _scoreViews[i].Disable();
+                }
             }
 
-            foreach (var _score in _scores)
+            for (int i = 0; i < _scores.Count; ++i)
             {
+                var _score = _scores[i];
                 if (_score.Instrument == instrument)
                 {
-                    YargLogger.LogInfo($"Found score {_score.Instrument} {_score.Score} {_score.Difficulty}");
                     var scoreView = _scoreViews[(int) _score.Difficulty - 1];
                     scoreView.SetScore(_score);
                 }
             }
+        }
+
+        // copied from DifficultySelectMenu
+        private bool HasPlayableDifficulty(SongEntry entry, in Instrument instrument, in Difficulty difficulty)
+        {
+            // For vocals, insert special difficulties
+            if (instrument is Instrument.Vocals or Instrument.Harmony)
+            {
+                return difficulty is not (Difficulty.Beginner or Difficulty.ExpertPlus);
+            }
+
+            // Otherwise, we can do this
+            return entry[instrument][difficulty] || instrument switch
+            {
+                // Allow 5 -> 4-lane conversions to be played on 4-lane
+                Instrument.FourLaneDrums or
+                Instrument.ProDrums      => entry[Instrument.FiveLaneDrums][difficulty],
+                // Allow 4 -> 5-lane conversions to be played on 5-lane
+                Instrument.FiveLaneDrums => entry[Instrument.ProDrums][difficulty],
+                _ => false
+            };
         }
 
         private void OnDisable()
@@ -471,13 +497,5 @@ namespace YARG.Menu.MusicLibrary
         {
             MenuManager.Instance.PopMenu();
         }
-
-        // public void CycleInstrument()
-        // {
-        //     _instrumentHeaderList[_instrumentIdx].SetSelected(false);
-        //     _instrumentIdx = (_instrumentIdx + 1) % 5;
-        //     _infoContainers.SelectInstrument(_instrumentIdx);
-        //     _instrumentHeaderList[_instrumentIdx].SetSelected(true);
-        // }
     }
 }

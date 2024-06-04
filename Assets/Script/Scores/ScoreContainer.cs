@@ -265,21 +265,6 @@ namespace YARG.Scores
             return null;
         }
 
-        public static List<PlayerInfoRecord> GetAllPlayers()
-        {
-            try
-            {
-                var query = $"SELECT * FROM Players";
-                return _db.Query<PlayerInfoRecord>(query);
-            }
-            catch (Exception e)
-            {
-                YargLogger.LogException(e, "Failed to load players from database.");
-            }
-
-            return null;
-        }
-
         public static List<SongEntry> GetMostPlayedSongs(int maxCount)
         {
             try
