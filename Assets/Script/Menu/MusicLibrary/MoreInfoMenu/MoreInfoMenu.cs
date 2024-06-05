@@ -11,6 +11,7 @@ using YARG.Core.Song;
 using YARG.Helpers.Extensions;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
+using YARG.Player;
 using YARG.Scores;
 using YARG.Song;
 
@@ -47,11 +48,6 @@ namespace YARG.Menu.MusicLibrary
         [SerializeField]
         private Image _sourceIconFooterBackground;
         
-        // [Space]
-        // [SerializeField]
-        // private GameObject _menuItemPrefab;
-        // [SerializeField]
-        // private Transform _menuItemContainer;
         [Space]
         [SerializeField]
         private NavigationGroup _instrumentSelectNavGroup;
@@ -86,6 +82,8 @@ namespace YARG.Menu.MusicLibrary
 
         [Space]        
         [SerializeField]
+        private NavigationGroup _menuNavGroup;
+        [SerializeField]
         private NavigatableButton _playButton;
         [SerializeField]
         private NavigatableButton _practiceButton;
@@ -95,6 +93,12 @@ namespace YARG.Menu.MusicLibrary
         private Image _bandDifficultyBar;
         [SerializeField]
         private TextMeshProUGUI _bandDifficultyLabel;
+
+        [Space]
+        [SerializeField]
+        private RectTransform _inner;
+        [SerializeField]
+        private RectTransform _outer;
 
         private readonly List<DifficultyRing> _difficultyRings = new();
 
@@ -111,6 +115,7 @@ namespace YARG.Menu.MusicLibrary
         private CancellationTokenSource _cancellationToken2;
         private SongEntry _currentSong;
         private List<PlayerScoreRecord> _scores;
+        private List<GameObject> _instrumentHeaderGameObjects = new();
 
         public void Awake()
         {
@@ -119,38 +124,6 @@ namespace YARG.Menu.MusicLibrary
 
         public void Initialize()
         {
-            // _navGroup.ClearNavigatables();
-            // _menuItemContainer.DestroyChildren();
-
-            // var go = Instantiate(_menuItemPrefab, _menuItemContainer);
-            // var btn = go.GetComponent<MoreInfoMenuItem>();
-            // btn.Initialize("Play Song", true, (bool x) => {YargLogger.LogInfo("A");});
-
-            // var go2 = Instantiate(_menuItemPrefab, _menuItemContainer);
-            // var btn2 = go2.GetComponent<MoreInfoMenuItem>();
-            // btn2.Initialize("Practice Song", false, (bool x) => {YargLogger.LogInfo("B");});
-
-            // var go3 = Instantiate(_menuItemPrefab, _menuItemContainer);
-            // var btn3 = go3.GetComponent<MoreInfoMenuItem>();
-            // btn3.Initialize("Rating", false, (bool x) => {YargLogger.LogInfo("C");});
-
-            // _navGroup.AddNavigatable(btn);
-            // _navGroup.AddNavigatable(btn2);
-            // _navGroup.AddNavigatable(btn3);
-
-            // btn.SetSelected(true, SelectionOrigin.Mouse);
-
-            // var instrumentHeaders = new List<string> {"Guitar", "Bass", "Drums", "Vocals", "Keys"};
-            // foreach (var instrumentHeader in instrumentHeaders)
-            // {
-            //     var go4 = Instantiate(_instrumentHeaderPrefab, _instrumentHeaderContainer);
-            //     var header = go4.GetComponent<InstrumentHeader>();
-            //     header.SetText(instrumentHeader);
-            //     header.SetSelected(false);
-            //     _instrumentHeaderList.Add(header);
-            // }
-            // _instrumentHeaderList[_instrumentIdx].SetSelected(true);
-
             for (int i = 0; i < 5; ++i)
             {
                 var go = Instantiate(_difficultyRingPrefab, _difficultyRingsTopContainer);
@@ -163,12 +136,6 @@ namespace YARG.Menu.MusicLibrary
                 _difficultyRings.Add(go.GetComponent<DifficultyRing>());
             }
 
-            // for (int i = 0; i < 5; ++i)
-            // {
-            //     var go = Instantiate(_difficultyRingPrefab, _difficultyRingsBottomContainer);
-            //     _difficultyRings.Add(go.GetComponent<DifficultyRing>());
-            // }
-
             for (int i = 0; i < _displayedDifficulties.Count; ++i)
             {
                 var go = Instantiate(_scoreViewPrefab, _scoreViewContainer);
@@ -178,6 +145,31 @@ namespace YARG.Menu.MusicLibrary
             }
 
             _instrumentSelectNavGroup.SelectionChanged += UpdateDisplayedScores;
+
+            _menuNavGroup.AddNavigatable(_playButton);
+            _menuNavGroup.AddNavigatable(_practiceButton);
+            _menuNavGroup.SelectFirst();
+
+            _playButton.SetOnClickEvent(Play);
+            _practiceButton.SetOnClickEvent(Practice);
+        }
+
+        private void Play()
+        {
+            if (PlayerContainer.Players.Count <= 0) return;
+
+            GlobalVariables.State.IsPractice = false;
+            GlobalVariables.State.CurrentSong = _currentSong;
+            MenuManager.Instance.PushMenu(MenuManager.Menu.DifficultySelect);
+        }
+
+        private void Practice()
+        {
+            if (PlayerContainer.Players.Count <= 0) return;
+
+            GlobalVariables.State.IsPractice = true;
+            GlobalVariables.State.CurrentSong = _currentSong;
+            MenuManager.Instance.PushMenu(MenuManager.Menu.DifficultySelect);
         }
 
         private void UpdateDifficulties()
@@ -275,10 +267,7 @@ namespace YARG.Menu.MusicLibrary
         
         private void OnEnable()
         {
-            var redEntry = new NavigationScheme.Entry(MenuAction.Red, "Back", () =>
-            {
-                gameObject.SetActive(false);
-            });
+            var redEntry = new NavigationScheme.Entry(MenuAction.Red, "Back", () => gameObject.SetActive(false));
             var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Change Instrument", () =>
             {
                 if (_instrumentSelectNavGroup.SelectedIndex == _instrumentSelectNavGroup.Count - 1)
@@ -364,6 +353,7 @@ namespace YARG.Menu.MusicLibrary
                 _instrumentSelectNavGroup.AddNavigatable(button.Button);
                 _activeInstruments[_idx] = instrument;
                 _idx++;
+                _instrumentHeaderGameObjects.Add(go);
             }
         }
 
@@ -372,6 +362,7 @@ namespace YARG.Menu.MusicLibrary
             _idx = 0;
             _instrumentDifficultyButtonsContainer.DestroyChildren();
             _instrumentSelectNavGroup.ClearNavigatables();
+            _instrumentHeaderGameObjects.Clear();
 
             CreateInstrumentButton("Guitar", Instrument.FiveFretGuitar);
             CreateInstrumentButton("Bass", Instrument.FiveFretBass);
@@ -393,6 +384,23 @@ namespace YARG.Menu.MusicLibrary
 
             if (selectedIndex == null)
                 return;
+
+            Canvas.ForceUpdateCanvases();
+            
+            var min = _instrumentHeaderGameObjects[(int) selectedIndex].GetComponent<RectTransform>().ToScreenSpace().xMin;
+            var max = _instrumentHeaderGameObjects[(int) selectedIndex].GetComponent<RectTransform>().ToScreenSpace().xMax;
+            var outerL = _outer.ToScreenSpace().xMin;
+            var outerR = _outer.ToScreenSpace().xMax;
+
+            var currentAnchorPos = _inner.anchoredPosition;
+            if (min < outerL)
+            {
+                _inner.anchoredPosition = currentAnchorPos.WithX(currentAnchorPos.x + (outerL - min) * 2);
+            }
+            else if (max > outerR)
+            {
+                _inner.anchoredPosition = currentAnchorPos.WithX(currentAnchorPos.x + (outerR - max) * 2);
+            }
             
             var instrument = _activeInstruments[(int) selectedIndex];
             for (int i = 0; i < _displayedDifficulties.Count; ++i)

@@ -49,7 +49,7 @@ namespace YARG.Menu.MusicLibrary
         {
             var playerName = PlayerContainer.GetProfileById(score.PlayerId).Name;
             _profileName.text = playerName;
-            _scoreText.text = score.Score.ToString();
+            _scoreText.text = score.Score.ToString("N0");
             _percentText.text = $"{Math.Floor((float) score.Percent * 100)}%";
             _starView.SetStars(score.Stars);
 
