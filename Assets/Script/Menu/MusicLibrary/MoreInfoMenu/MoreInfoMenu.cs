@@ -187,9 +187,9 @@ namespace YARG.Menu.MusicLibrary
                 Co-op                ; Rhythm             ; GH Drums
             */
 
-            _difficultyRings[0].SetInfo("guitar", "FiveFretGuitar", entry[Instrument.FiveFretGuitar]);
-            _difficultyRings[1].SetInfo("bass", "FiveFretBass", entry[Instrument.FiveFretBass]);
-            _difficultyRings[2].SetInfo("drums", "FourLaneDrums", entry[Instrument.FourLaneDrums]);
+            _difficultyRings[0].SetInfo("guitar", Instrument.FiveFretGuitar, entry[Instrument.FiveFretGuitar]);
+            _difficultyRings[1].SetInfo("bass", Instrument.FiveFretBass, entry[Instrument.FiveFretBass]);
+            _difficultyRings[2].SetInfo("drums", Instrument.FourLaneDrums, entry[Instrument.FourLaneDrums]);
 
             // 5-lane or 4-lane
             // if (entry.HasInstrument(Instrument.FiveLaneDrums))
@@ -197,8 +197,8 @@ namespace YARG.Menu.MusicLibrary
             //     _difficultyRings[2].SetInfo("ghDrums", "FiveLaneDrums", entry[Instrument.FiveLaneDrums]);
             // }
 
-            _difficultyRings[3].SetInfo("keys", "Keys", entry[Instrument.Keys]);
-            _difficultyRings[4].SetInfo("vocals", "Vocals", entry[Instrument.Vocals]);
+            _difficultyRings[3].SetInfo("keys", Instrument.Keys, entry[Instrument.Keys]);
+            _difficultyRings[4].SetInfo("vocals", Instrument.Vocals, entry[Instrument.Vocals]);
 
             // if (entry.HasInstrument(Instrument.Harmony))
             // {
@@ -218,7 +218,7 @@ namespace YARG.Menu.MusicLibrary
                 
             // }
 
-            _difficultyRings[5].SetInfo("realGuitar", "ProGuitar", entry[Instrument.ProGuitar_17Fret]);
+            _difficultyRings[5].SetInfo("realGuitar", Instrument.Vocals, entry[Instrument.Vocals]);
 
             // Protar or Co-op
             // if (entry.HasInstrument(Instrument.ProGuitar_17Fret) || entry.HasInstrument(Instrument.ProGuitar_22Fret))
@@ -233,7 +233,7 @@ namespace YARG.Menu.MusicLibrary
             //     _difficultyRings[5].SetInfo("guitarCoop", "FiveFretCoopGuitar", entry[Instrument.FiveFretCoopGuitar]);
             // }
 
-            _difficultyRings[6].SetInfo("realBass", "ProBass", entry[Instrument.ProBass_17Fret]);
+            _difficultyRings[6].SetInfo("realBass", Instrument.ProBass_17Fret, entry[Instrument.ProBass_17Fret]);
 
             // ProBass or Rhythm
             // if (entry.HasInstrument(Instrument.ProBass_17Fret) || entry.HasInstrument(Instrument.ProBass_22Fret))
@@ -248,8 +248,8 @@ namespace YARG.Menu.MusicLibrary
             //     _difficultyRings[6].SetInfo("rhythm", "FiveFretRhythm", entry[Instrument.FiveFretRhythm]);
             // }
 
-            _difficultyRings[7].SetInfo("trueDrums", "TrueDrums", PartValues.Default);
-            _difficultyRings[8].SetInfo("realKeys", "ProKeys", entry[Instrument.ProKeys]);
+            _difficultyRings[7].SetInfo("trueDrums", default, PartValues.Default);
+            _difficultyRings[8].SetInfo("realKeys", Instrument.ProKeys, entry[Instrument.ProKeys]);
             _difficultyRings[9].SetInfo(
                 entry.VocalsCount switch
                 {
@@ -257,7 +257,7 @@ namespace YARG.Menu.MusicLibrary
                     >= 3 => "harmVocals",
                     _ => "vocals"
                 },
-                "Harmony",
+                Instrument.Harmony,
                 entry[Instrument.Harmony]
             );
 
@@ -452,7 +452,7 @@ namespace YARG.Menu.MusicLibrary
             Navigator.Instance.PopScheme();
         }
 
-        public async void LoadSourceIcons()
+        public void LoadSourceIcons()
         {
             if (_currentSong == null) return;
 
@@ -463,7 +463,7 @@ namespace YARG.Menu.MusicLibrary
             try
             {
                 var token = new CancellationToken();
-                var icon = await SongSources.SourceToIcon(_currentSong.Source);
+                var icon = SongSources.SourceToIcon(_currentSong.Source);
 
                 token.ThrowIfCancellationRequested();
 
@@ -482,7 +482,7 @@ namespace YARG.Menu.MusicLibrary
             }
         }
 
-        public async void LoadAlbumCover()
+        public void LoadAlbumCover()
         {
             if (_currentSong == null) return;
 
@@ -491,8 +491,8 @@ namespace YARG.Menu.MusicLibrary
             // Load the new one
             _cancellationToken = new();
             _cancellationToken2 = new();
-            await _albumArt.LoadAlbumCover(GlobalVariables.State.CurrentSong, _cancellationToken.Token);
-            await _albumArtBackground.LoadAlbumCover(GlobalVariables.State.CurrentSong, _cancellationToken2.Token);
+            _albumArt.LoadAlbumCover(GlobalVariables.State.CurrentSong, _cancellationToken.Token);
+            _albumArtBackground.LoadAlbumCover(GlobalVariables.State.CurrentSong, _cancellationToken2.Token);
 
             // Dispose of the old texture (prevent memory leaks)
             if (originalTexture != null)
