@@ -486,19 +486,11 @@ namespace YARG.Menu.MusicLibrary
         {
             if (_currentSong == null) return;
 
-            var originalTexture = _albumArt.texture;
-
             // Load the new one
             _cancellationToken = new();
             _cancellationToken2 = new();
             _albumArt.LoadAlbumCover(GlobalVariables.State.CurrentSong, _cancellationToken.Token);
             _albumArtBackground.LoadAlbumCover(GlobalVariables.State.CurrentSong, _cancellationToken2.Token);
-
-            // Dispose of the old texture (prevent memory leaks)
-            if (originalTexture != null)
-            {
-                Destroy(originalTexture);
-            }
         }
 
         private void Back()
