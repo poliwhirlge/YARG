@@ -15,8 +15,27 @@ namespace YARG.Gameplay.Player
 {
     public class ProKeysPlayer : TrackPlayer<ProKeysEngine, ProKeysNote>
     {
+        public struct RangeShift
+        {
+            public double Time;
+            public double TimeLength;
+
+            public uint Tick;
+            public uint TickLength;
+
+            public int Key;
+        }
+
+        public struct RangeShiftIndicator
+        {
+            public double Time;
+            public bool LeftSide;
+        }
+
         public const int WHITE_KEY_VISIBLE_COUNT = 10;
         public const int TOTAL_KEY_COUNT = 25;
+
+        private const int SHIFT_INDICATOR_MEASURES_BEFORE = 4;
 
         public override float[] StarMultiplierThresholds { get; protected set; } =
         {
@@ -29,16 +48,23 @@ namespace YARG.Gameplay.Player
 
         public override bool ShouldUpdateInputsOnResume => true;
 
+        public float RangeShiftOffset => _currentOffset;
+
         [Header("Pro Keys Specific")]
         [SerializeField]
         private KeysArray _keysArray;
         [SerializeField]
         private ProKeysTrackOverlay _trackOverlay;
+        [SerializeField]
+        private Pool _shiftIndicatorPool;
+        [SerializeField]
+        private KeyedPool _chordBarPool;
 
-        private List<ProKeysRangeShift> _rangeShifts;
+        private List<RangeShift> _rangeShifts;
+        private readonly List<RangeShiftIndicator> _shiftIndicators = new();
 
-        private int _phraseIndex;
         private int _rangeShiftIndex;
+        private int _shiftIndicatorIndex;
 
         private bool _isOffsetChanging;
 
@@ -84,6 +110,8 @@ namespace YARG.Gameplay.Player
             engine.OnStarPowerPhraseHit += OnStarPowerPhraseHit;
             engine.OnStarPowerStatus += OnStarPowerStatus;
 
+            engine.OnKeyStateChange += OnKeyStateChange;
+
             return engine;
         }
 
@@ -91,20 +119,7 @@ namespace YARG.Gameplay.Player
         {
             base.FinishInitialization();
 
-            _rangeShifts = NoteTrack.Phrases.Where(phrase =>
-                phrase.Type is >= PhraseType.ProKeys_RangeShift0 and <= PhraseType.ProKeys_RangeShift5).Select(phrase =>
-            {
-                return new ProKeysRangeShift { Time = phrase.Time, TimeLength = phrase.TimeLength, Key = phrase.Type switch
-                {
-                    PhraseType.ProKeys_RangeShift0 => 0,
-                    PhraseType.ProKeys_RangeShift1 => 2,
-                    PhraseType.ProKeys_RangeShift2 => 4,
-                    PhraseType.ProKeys_RangeShift3 => 5,
-                    PhraseType.ProKeys_RangeShift4 => 7,
-                    PhraseType.ProKeys_RangeShift5 => 9,
-                    _ => throw new Exception("Unreachable")
-                } };
-            }).ToList();
+            GetRangeShifts();
 
             _keysArray.Initialize(this, Player.ThemePreset, Player.ColorProfile.ProKeys);
             _trackOverlay.Initialize(this, Player.ColorProfile.ProKeys);
@@ -121,6 +136,7 @@ namespace YARG.Gameplay.Player
             base.ResetPracticeSection();
 
             _rangeShiftIndex = 0;
+            _shiftIndicatorIndex = 0;
 
             if (_rangeShifts.Count > 0)
             {
@@ -133,10 +149,28 @@ namespace YARG.Gameplay.Player
         {
             base.SetPracticeSection(start, end);
 
+            GetRangeShifts();
+
+            // This should never happen unless the chart has no range shifts, which is just bad charting
+            if (_rangeShifts.Count == 0)
+            {
+                YargLogger.LogWarning("No range shifts found in chart. Defaulting to 0.");
+                RangeShiftTo(0, 0);
+                _rangeShiftIndex++;
+
+                return;
+            }
+
             _rangeShiftIndex = 0;
-            _rangeShifts = GetRangeShifts();
+            _shiftIndicatorIndex = 0;
 
             int startIndex = _rangeShifts.FindIndex(r => r.Tick >= start);
+
+            // No range shifts were >= start, so get the one prior.
+            if(startIndex == -1)
+            {
+                startIndex = _rangeShifts.FindLastIndex(r => r.Tick < start);
+            }
 
             // If the range shift is not on the starting tick, get the one before it.
             // This is so that the correct range is used at the start of the section.
@@ -160,7 +194,6 @@ namespace YARG.Gameplay.Player
 
             if (_rangeShifts.Count > 0)
             {
-                YargLogger.LogFormatDebug("Range Shifting from SetPracticeSection to {0} over {1}", _rangeShifts[0].Key, 0);
                 RangeShiftTo(_rangeShifts[0].Key, 0);
                 _rangeShiftIndex++;
             }
@@ -173,6 +206,11 @@ namespace YARG.Gameplay.Player
             if (GameManager.Paused) return;
 
             (NotePool.GetByKey(note) as ProKeysNoteElement)?.HitNote();
+            _keysArray.PlayHitAnimation(note.Key);
+
+            // Chord bars are spawned based on the parent element
+            var parent = note.ParentOrSelf;
+            (_chordBarPool.GetByKey(parent) as ProKeysChordBarElement)?.CheckForChordHit();
         }
 
         private void OnOverhit(int key)
@@ -182,9 +220,14 @@ namespace YARG.Gameplay.Player
             // do overhit visuals
         }
 
+        private void OnKeyStateChange(int key, bool isPressed)
+        {
+            _trackOverlay.SetKeyHeld(key, isPressed);
+            _keysArray.SetPressed(key, isPressed);
+        }
+
         private void RangeShiftTo(int noteIndex, double timeLength)
         {
-            YargLogger.LogFormatDebug("Shifting to {0} over {1}", noteIndex, timeLength);
             _isOffsetChanging = true;
 
             _offsetStartTime = GameManager.RealVisualTime;
@@ -224,8 +267,6 @@ namespace YARG.Gameplay.Player
                     // If the change has finished, stop!
                     _isOffsetChanging = false;
                     _currentOffset = _targetOffset;
-
-                    YargLogger.LogDebug("Offset change finished");
                 }
                 else
                 {
@@ -242,28 +283,52 @@ namespace YARG.Gameplay.Player
 
                 foreach (var note in NotePool.AllSpawned)
                 {
-                    (note as ProKeysNoteElement)?.UpdateNoteX();
+                    (note as ProKeysNoteElement)?.UpdateXPosition();
+                }
+
+                foreach (var bar in _chordBarPool.AllSpawned)
+                {
+                    (bar as ProKeysChordBarElement)?.UpdateXPosition();
                 }
             }
         }
 
         private void UpdatePhrases(double songTime)
         {
-            var phrases = NoteTrack.Phrases;
-
-            while (_phraseIndex < phrases.Count && phrases[_phraseIndex].Time <= songTime)
-            {
-                var phrase = phrases[_phraseIndex];
-                _phraseIndex++;
-            }
-
             while (_rangeShiftIndex < _rangeShifts.Count && _rangeShifts[_rangeShiftIndex].Time <= songTime)
             {
                 var rangeShift = _rangeShifts[_rangeShiftIndex];
-                _rangeShiftIndex++;
 
-                YargLogger.LogFormatDebug("Range Shifting from UpdatePhrases to {0} over {1}", rangeShift.Key, rangeShift.TimeLength);
-                RangeShiftTo(rangeShift.Key, rangeShift.TimeLength);
+                const double rangeShiftTime = 0.25;
+                RangeShiftTo(rangeShift.Key, rangeShiftTime);
+
+                _rangeShiftIndex++;
+            }
+
+            while (_shiftIndicatorIndex < _shiftIndicators.Count
+                && _shiftIndicators[_shiftIndicatorIndex].Time <= songTime + SpawnTimeOffset)
+            {
+                var shiftIndicator = _shiftIndicators[_shiftIndicatorIndex];
+
+                // Skip this frame if the pool is full
+                if (!_shiftIndicatorPool.CanSpawnAmount(1))
+                {
+                    break;
+                }
+
+                var poolable = _shiftIndicatorPool.TakeWithoutEnabling();
+                if (poolable == null)
+                {
+                    YargLogger.LogWarning("Attempted to spawn shift indicator, but it's at its cap!");
+                    break;
+                }
+
+                YargLogger.LogDebug("Shift indicator spawned!");
+
+                ((ProKeysShiftIndicatorElement) poolable).RangeShiftIndicator = shiftIndicator;
+                poolable.EnableFromPool();
+
+                _shiftIndicatorIndex++;
             }
         }
 
@@ -281,15 +346,32 @@ namespace YARG.Gameplay.Player
             ((ProKeysNoteElement) poolable).NoteRef = note;
         }
 
+        protected override void OnNoteSpawned(ProKeysNote parentNote)
+        {
+            if (parentNote.WasHit || parentNote.ChildNotes.Count <= 0)
+            {
+                return;
+            }
+
+            if (!_chordBarPool.CanSpawnAmount(1))
+            {
+                return;
+            }
+
+            var poolable = _chordBarPool.KeyedTakeWithoutEnabling(parentNote);
+            if (poolable == null)
+            {
+                YargLogger.LogWarning("Attempted to spawn shift indicator, but it's at its cap!");
+                return;
+            }
+
+            ((ProKeysChordBarElement) poolable).NoteRef = parentNote;
+            poolable.EnableFromPool();
+        }
+
         protected override bool InterceptInput(ref GameInput input)
         {
             var action = input.GetAction<ProKeysAction>();
-            if (action != ProKeysAction.StarPower && action != ProKeysAction.TouchEffects)
-            {
-                int key = (int) action;
-                _trackOverlay.SetKeyHeld(key, input.Button);
-                _keysArray.SetPressed(key, input.Button);
-            }
 
             // Ignore SP in practice mode
             if (action == ProKeysAction.StarPower && GameManager.IsPractice) return true;
@@ -297,34 +379,84 @@ namespace YARG.Gameplay.Player
             return false;
         }
 
-        private List<ProKeysRangeShift> GetRangeShifts()
+        private void GetRangeShifts()
         {
-            return NoteTrack.Phrases.Where(phrase =>
-                phrase.Type is >= PhraseType.ProKeys_RangeShift0 and <= PhraseType.ProKeys_RangeShift5).Select(phrase =>
-            {
-                return new ProKeysRangeShift { Time = phrase.Time, TimeLength = phrase.TimeLength, Tick = phrase.Tick,
-                    TickLength = phrase.TickLength, Key = phrase.Type switch
+            // Get the range shifts from the phrases
+
+            _rangeShifts = NoteTrack.Phrases
+                .Where(phrase => phrase.Type is >= PhraseType.ProKeys_RangeShift0 and <= PhraseType.ProKeys_RangeShift5)
+                .Select(phrase =>
                 {
-                    PhraseType.ProKeys_RangeShift0 => 0,
-                    PhraseType.ProKeys_RangeShift1 => 2,
-                    PhraseType.ProKeys_RangeShift2 => 4,
-                    PhraseType.ProKeys_RangeShift3 => 5,
-                    PhraseType.ProKeys_RangeShift4 => 7,
-                    PhraseType.ProKeys_RangeShift5 => 9,
-                    _                              => throw new Exception("Unreachable")
-                } };
-            }).ToList();
+                    return new RangeShift
+                    {
+                        Time = phrase.Time,
+                        TimeLength = phrase.TimeLength,
+
+                        Tick = phrase.Tick,
+                        TickLength = phrase.TickLength,
+
+                        Key = phrase.Type switch
+                        {
+                            PhraseType.ProKeys_RangeShift0 => 0,
+                            PhraseType.ProKeys_RangeShift1 => 2,
+                            PhraseType.ProKeys_RangeShift2 => 4,
+                            PhraseType.ProKeys_RangeShift3 => 5,
+                            PhraseType.ProKeys_RangeShift4 => 7,
+                            PhraseType.ProKeys_RangeShift5 => 9,
+                            _                              => throw new Exception("Unreachable")
+                        }
+                    };
+                })
+                .ToList();
+
+            // Get the range shift change indicator times based on the strong beatlines
+
+            var beatlines = Beatlines
+                .Where(i => i.Type is BeatlineType.Measure or BeatlineType.Strong)
+                .ToList();
+
+            _shiftIndicators.Clear();
+            int lastShiftKey = 0;
+            int beatlineIndex = 0;
+
+            foreach (var shift in _rangeShifts)
+            {
+                if (shift.Key == lastShiftKey)
+                {
+                    continue;
+                }
+
+                var shiftLeft = shift.Key > lastShiftKey;
+                lastShiftKey = shift.Key;
+
+                // Look for the closest beatline index. Since the range shifts are
+                // in order, we can just continuously look for the correct beatline
+                for (; beatlineIndex < beatlines.Count; beatlineIndex++)
+                {
+                    if (beatlines[beatlineIndex].Time > shift.Time)
+                    {
+                        break;
+                    }
+                }
+
+                // Add the indicators before the range shift
+                for (int i = SHIFT_INDICATOR_MEASURES_BEFORE; i >= 1; i--)
+                {
+                    var realIndex = beatlineIndex - i;
+
+                    // If the indicator is before any measures, skip
+                    if (realIndex < 0)
+                    {
+                        break;
+                    }
+
+                    _shiftIndicators.Add(new RangeShiftIndicator
+                    {
+                        Time = beatlines[realIndex].Time,
+                        LeftSide = shiftLeft
+                    });
+                }
+            }
         }
-    }
-
-    public struct ProKeysRangeShift
-    {
-        public double Time;
-        public double TimeLength;
-
-        public uint Tick;
-        public uint TickLength;
-
-        public int Key;
     }
 }
