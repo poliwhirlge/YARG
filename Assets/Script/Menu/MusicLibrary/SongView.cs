@@ -86,6 +86,50 @@ namespace YARG.Menu.MusicLibrary
                 _favoriteButtonContainer.SetActive(false);
                 _favoriteButtonContainerSelected.SetActive(false);
             }
+            
+            // Set height
+            if (viewType is SortHeaderViewType)
+            {
+                gameObject.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 60);
+            }
+            else
+            {
+                gameObject.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 80);
+            }
+        }
+
+        protected override void SetBackground(bool selected, BaseViewType.BackgroundType type)
+        {
+            base.SetBackground(selected, type);
+            // _normalBackground.SetActive(false);
+            // _selectedBackground.SetActive(false);
+            // _categoryBackground.SetActive(false);
+
+            // switch (type)
+            // {
+            //     case BaseViewType.BackgroundType.Normal:
+            //         if (selected)
+            //         {
+            //             _selectedBackground.SetActive(true);
+            //         }
+            //         else
+            //         {
+            //             _normalBackground.SetActive(true);
+            //         }
+
+            //         break;
+            //     case BaseViewType.BackgroundType.Category:
+            //         if (selected)
+            //         {
+            //             _selectedBackground.SetActive(true);
+            //         }
+            //         else
+            //         {
+            //             _categoryBackground.SetActive(true);
+            //         }
+
+            //         break;
+            // }
         }
 
         private void UpdateFavoriteSprite(ViewType.FavoriteInfo favoriteInfo)

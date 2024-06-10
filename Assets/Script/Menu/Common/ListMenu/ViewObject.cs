@@ -61,7 +61,7 @@ namespace YARG.Menu.ListMenu
             _canvasGroup.alpha = 0f;
         }
 
-        private void SetBackground(bool selected, BaseViewType.BackgroundType type)
+        protected virtual void SetBackground(bool selected, BaseViewType.BackgroundType type)
         {
             _normalBackground.SetActive(false);
             _selectedBackground.SetActive(false);
