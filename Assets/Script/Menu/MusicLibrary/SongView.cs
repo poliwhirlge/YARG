@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.SmartFormat.Utilities;
 using UnityEngine.UI;
 using YARG.Menu.ListMenu;
 using YARG.Settings;
@@ -11,7 +12,9 @@ namespace YARG.Menu.MusicLibrary
         [SerializeField]
         private GameObject _songNameContainer;
         [SerializeField]
-        private TextMeshProUGUI _sideText;
+        private GameObject _instrumentDifficultyViewContainer;
+        [SerializeField]
+        private InstrumentDifficultyView _instrumentDifficultyView;
         [SerializeField]
         private StarView _starView;
 
@@ -40,6 +43,16 @@ namespace YARG.Menu.MusicLibrary
         private GameObject _categoryNameContainer;
         [SerializeField]
         private TextMeshProUGUI _categoryText;
+        [SerializeField]
+        private RectTransform _starsObtainedView;
+        [SerializeField]
+        private TextMeshProUGUI _starsObtainedText;
+
+        [Space]
+        [SerializeField]
+        private Image _trackGradient;
+        [SerializeField]
+        private Image _normalCategoryHeaderGradient;
 
         public override void Show(bool selected, ViewType viewType)
         {
@@ -58,7 +71,12 @@ namespace YARG.Menu.MusicLibrary
             }
 
             // Set side text
-            _sideText.text = viewType.GetSideText(selected);
+            var scoreInfo = viewType.GetScoreInfo();
+            _instrumentDifficultyViewContainer.SetActive(scoreInfo is not null);
+            if (scoreInfo is not null)
+            {
+                _instrumentDifficultyView.SetInfo(scoreInfo.Value);
+            }
 
             // Set star view
             var starAmount = viewType.GetStarAmount();
@@ -71,21 +89,28 @@ namespace YARG.Menu.MusicLibrary
             // Set "As Made Famous By" text
             _asMadeFamousByTextContainer.SetActive(viewType.UseAsMadeFamousBy);
 
+            // Set stars obtained view
+            _starsObtainedView.gameObject.SetActive(viewType is SortHeaderViewType);
+            if (viewType is SortHeaderViewType)
+            {
+                _starsObtainedText.text = viewType.GetSideText(selected);
+            }
+
             // Show/hide favorite button
 
-            var favoriteInfo = viewType.GetFavoriteInfo();
+            // var favoriteInfo = viewType.GetFavoriteInfo();
 
-            if (SettingsManager.Settings.ShowFavoriteButton.Value)
-            {
-                _favoriteButtonContainer.SetActive(!selected && favoriteInfo.ShowFavoriteButton);
-                _favoriteButtonContainerSelected.SetActive(selected && favoriteInfo.ShowFavoriteButton);
-                UpdateFavoriteSprite(favoriteInfo);
-            }
-            else
-            {
-                _favoriteButtonContainer.SetActive(false);
-                _favoriteButtonContainerSelected.SetActive(false);
-            }
+            // if (SettingsManager.Settings.ShowFavoriteButton.Value)
+            // {
+            //     _favoriteButtonContainer.SetActive(!selected && favoriteInfo.ShowFavoriteButton);
+            //     _favoriteButtonContainerSelected.SetActive(selected && favoriteInfo.ShowFavoriteButton);
+            //     UpdateFavoriteSprite(favoriteInfo);
+            // }
+            // else
+            // {
+            //     _favoriteButtonContainer.SetActive(false);
+            //     _favoriteButtonContainerSelected.SetActive(false);
+            // }
             
             // Set height
             if (viewType is SortHeaderViewType)
@@ -101,6 +126,18 @@ namespace YARG.Menu.MusicLibrary
         protected override void SetBackground(bool selected, BaseViewType.BackgroundType type)
         {
             base.SetBackground(selected, type);
+
+            // _trackGradient.gameObject.SetActive(false);
+            // _normalCategoryHeaderGradient.gameObject.SetActive(false);
+            // if (selected && type is BaseViewType.BackgroundType.Category)
+            // {
+            //     _normalCategoryHeaderGradient.gameObject.SetActive(true);
+            // }
+            // else
+            // {
+            //     _trackGradient.gameObject.SetActive(true);
+            // }
+            
             // _normalBackground.SetActive(false);
             // _selectedBackground.SetActive(false);
             // _categoryBackground.SetActive(false);

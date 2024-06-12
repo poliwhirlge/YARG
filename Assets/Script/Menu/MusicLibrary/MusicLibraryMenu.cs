@@ -5,6 +5,7 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 using YARG.Core.Audio;
+using YARG.Core.Game;
 using YARG.Core.Input;
 using YARG.Core.Song;
 using YARG.Menu.ListMenu;
@@ -250,10 +251,20 @@ namespace YARG.Menu.MusicLibrary
                         displayName = SongSources.Default.GetDisplayName();
                     }
                 }
-                list.Add(new SortHeaderViewType(displayName, section.Songs.Length));
 
+                var headerViewType = new SortHeaderViewType(displayName, section.Songs.Length);
+                list.Add(headerViewType);
+                var totalStars = 0;
                 // Add all of the songs
-                list.AddRange(section.Songs.Select(song => new SongViewType(this, song)));
+                for (var i = 0; i < section.Songs.Length; ++i)
+                {
+                    var song = section.Songs[i];
+                    var songView = new SongViewType(this, song);
+                    list.Add(songView);
+                    var starAmount = songView?.GetStarAmount();
+                    totalStars += starAmount is null ? 0 : StarAmountHelper.GetStarCount(starAmount.Value);
+                }
+                headerViewType.TotalStarsCount = totalStars;
             }
 
             if (_searchField.IsSearching)
@@ -340,10 +351,20 @@ namespace YARG.Menu.MusicLibrary
             {
                 // Create header
                 var displayName = section.Category;
-                list.Add(new SortHeaderViewType(displayName.ToUpperInvariant(), section.Songs.Length));
+                var headerViewType = new SortHeaderViewType(displayName.ToUpperInvariant(), section.Songs.Length);
+                list.Add(headerViewType);
 
                 // Add all of the songs
-                list.AddRange(section.Songs.Select(song => new SongViewType(this, song)));
+                var totalStars = 0;
+                for (var i = 0; i < section.Songs.Length; ++i)
+                {
+                    var song = section.Songs[i];
+                    var songView = new SongViewType(this, song);
+                    list.Add(songView);
+                    var starAmount = songView?.GetStarAmount();
+                    totalStars += starAmount is null ? 0 : StarAmountHelper.GetStarCount(starAmount.Value);
+                }
+                headerViewType.TotalStarsCount = totalStars;
             }
 
             CalculateCategoryHeaderIndices(list);

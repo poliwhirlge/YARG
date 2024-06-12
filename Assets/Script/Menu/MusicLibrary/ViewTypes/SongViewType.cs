@@ -1,6 +1,7 @@
 ﻿using Cysharp.Text;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using YARG.Core.Game;
 using YARG.Core.Song;
 using YARG.Helpers.Extensions;
@@ -77,6 +78,27 @@ namespace YARG.Menu.MusicLibrary
             }
 
             return builder.ToString();
+        }
+
+        public override ScoreInfo? GetScoreInfo()
+        {
+            var score = ScoreContainer.GetHighScore(SongEntry.Hash);
+            var bestPctScore = ScoreContainer.GetBestPercentageScore(SongEntry.Hash);
+
+            // Never played!
+            if (score is null)
+            {
+                return null;
+            }
+
+            return new ScoreInfo
+            {
+                Score = score.Score,
+                Difficulty = score.Difficulty,
+                Percent = bestPctScore.GetPercent(),
+                Instrument = score.Instrument,
+                IsFc = bestPctScore.IsFc
+            };
         }
 
         public override StarAmount? GetStarAmount()
