@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -36,6 +37,12 @@ namespace YARG.Menu.MusicLibrary
         private TextMeshProUGUI _length;
         [SerializeField]
         private RawImage _albumCover;
+        [SerializeField]
+        private RawImage _albumCoverSmall;
+        [SerializeField]
+        private Image _sourceBackground;
+        [SerializeField]
+        private Image _charterBackground;
 
         [FormerlySerializedAs("difficultyRingPrefab")]
         [Space]
@@ -44,6 +51,7 @@ namespace YARG.Menu.MusicLibrary
 
         private readonly List<DifficultyRing> _difficultyRings = new();
         private CancellationTokenSource _cancellationToken;
+        private CancellationTokenSource _cancellationToken2;
         private ViewType _currentView;
 
         private MusicLibraryMenu _musicLibraryMenu;
@@ -115,7 +123,12 @@ namespace YARG.Menu.MusicLibrary
             // Hide album art
             _albumCover.texture = null;
             _albumCover.color = Color.clear;
+            _albumCoverSmall.texture = null;
+            _albumCoverSmall.color = Color.clear;
             _album.text = string.Empty;
+
+            _sourceBackground.gameObject.SetActive(false);
+            _charterBackground.gameObject.SetActive(false);
 
             _year.text = string.Empty;
             _length.text = string.Empty;
@@ -154,8 +167,23 @@ namespace YARG.Menu.MusicLibrary
 
             UpdateDifficulties(songEntry);
 
+            var token = new CancellationToken();
+            var icon = SongSources.SourceToIcon(songEntry.Source);
+
+            token.ThrowIfCancellationRequested();
+
+            if (icon != null)
+            {
+                _charterBackground.gameObject.SetActive(true);
+                _charterBackground.sprite = icon;
+                _sourceBackground.gameObject.SetActive(true);
+                _sourceBackground.sprite = icon;
+            }
+
+            _cancellationToken2 = new();
+            _albumCoverSmall.LoadAlbumCover(songEntry, _cancellationToken2.Token);
             _cancellationToken = new();
-            _albumCover.LoadAlbumCover(songEntry, _cancellationToken.Token);
+            _albumCover.LoadAlbumCover(songEntry, _cancellationToken.Token, 0.25f);
         }
 
         private void UpdateDifficulties(SongEntry entry)
