@@ -24,12 +24,9 @@ namespace YARG.Gameplay.Visuals
                 // Get which note model to use
                 if (SettingsManager.Settings.UseCymbalModelsInFiveLane.Value)
                 {
-                    NoteGroup = (FiveLaneDrumPad) NoteRef.Pad switch
-                    {
-                        FiveLaneDrumPad.Yellow => noteGroups[(int) NoteType.Cymbal],
-                        FiveLaneDrumPad.Orange => noteGroups[(int) NoteType.Cymbal],
-                        _                      => noteGroups[(int) NoteType.Normal]
-                    };
+                    bool isCymbal = (FiveLaneDrumPad) NoteRef.Pad is FiveLaneDrumPad.Yellow or FiveLaneDrumPad.Orange;
+
+                    NoteGroup = noteGroups[GetNoteGroup(isCymbal)];
                 }
                 else
                 {
@@ -74,7 +71,7 @@ namespace YARG.Gameplay.Visuals
             // Get colors
             var colorNoStarPower = colors.GetNoteColor(pad);
             var color = colorNoStarPower;
-            if (NoteRef.IsStarPowerActivator && Player.Engine.EngineStats.CanStarPowerActivate)
+            if (NoteRef.IsStarPowerActivator && Player.Engine.CanStarPowerActivate)
             {
                 color = colors.ActivationNote;
             }

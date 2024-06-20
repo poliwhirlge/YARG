@@ -125,7 +125,7 @@ namespace YARG.Menu.MusicLibrary
         public override void SecondaryTextClick()
         {
             base.SecondaryTextClick();
-           _musicLibrary.SetSearchInput(SortAttribute.Artist, $"\"{SongEntry.Artist.SortStr}\"");
+           _musicLibrary.SetSearchInput(SortAttribute.Artist, $"\"{SongEntry.Artist.SearchStr}\"");
         }
 
         public override void PrimaryButtonClick()
@@ -140,7 +140,7 @@ namespace YARG.Menu.MusicLibrary
 
         public override void IconClick()
         {
-           _musicLibrary.SetSearchInput(SortAttribute.Source, $"\"{SongEntry.Source.SortStr}\"");
+           _musicLibrary.SetSearchInput(SortAttribute.Source, $"\"{SongEntry.Source.SearchStr}\"");
         }
 
         public override void FavoriteClick()

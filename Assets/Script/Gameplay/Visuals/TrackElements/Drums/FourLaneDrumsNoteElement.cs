@@ -29,7 +29,7 @@ namespace YARG.Gameplay.Visuals
                 transform.localPosition = new Vector3(GetElementX(lane, 4), 0f, 0f) * LeftyFlipMultiplier;
 
                 // Get which note model to use
-                NoteGroup = isCymbal ? noteGroups[(int) NoteType.Cymbal] : noteGroups[(int) NoteType.Normal];
+                NoteGroup = noteGroups[GetNoteGroup(isCymbal)];
             }
             else
             {
@@ -71,7 +71,7 @@ namespace YARG.Gameplay.Visuals
             // Get colors
             var colorNoStarPower = colors.GetNoteColor(pad);
             var color = colorNoStarPower;
-            if (NoteRef.IsStarPowerActivator && Player.Engine.EngineStats.CanStarPowerActivate)
+            if (NoteRef.IsStarPowerActivator && Player.Engine.CanStarPowerActivate)
             {
                 color = colors.ActivationNote;
             }
