@@ -85,7 +85,7 @@ namespace YARG.Audio.BASS
             }
 
             // Don't attempt to seek past the end of the stream
-            if (_length >= 0 && bytes > _length)
+            if (_length > 0 && bytes > _length)
             {
                 bytes = _length - 1;
             }
