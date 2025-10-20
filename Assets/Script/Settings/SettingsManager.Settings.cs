@@ -90,7 +90,8 @@ namespace YARG.Settings
             public ToggleSetting ShowActivePlayers { get; } = new(false, ShowActivePlayersCallback);
             public ToggleSetting ShowActiveBots { get; } = new(false, ShowActiveBotsCallback);
 
-            public ToggleSetting ReconnectProfiles { get; } = new(true);
+            public ToggleSetting ReconnectProfiles  { get; } = new(true);
+            public ToggleSetting AutoCreateProfiles { get; } = new(true);
 
             public ToggleSetting ReduceNoteSpeedByDifficulty { get; } = new(true);
 
