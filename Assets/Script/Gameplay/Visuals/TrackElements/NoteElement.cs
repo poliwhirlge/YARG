@@ -41,7 +41,7 @@ namespace YARG.Gameplay.Visuals
         private bool _lastStarPowerState;
         private bool _lastStarPowerActiveState;
 
-        protected bool IsStarPowerVisible;
+        protected bool IsStarPowerVisible => CalcStarPowerVisible();
 
         public abstract void SetThemeModels(ThemeDict models, ThemeDict starPowerModels);
 
@@ -50,8 +50,6 @@ namespace YARG.Gameplay.Visuals
             SustainState = SustainState.Waiting;
             _lastStarPowerState = NoteRef.IsStarPower;
             _lastStarPowerActiveState = Player.BaseStats.IsStarPowerActive;
-
-            IsStarPowerVisible = CalcStarPowerVisible();
         }
 
         protected override void UpdateElement()
@@ -75,10 +73,6 @@ namespace YARG.Gameplay.Visuals
         /// </summary>
         public virtual void OnStarPowerUpdated()
         {
-            bool shouldShowStarPower = CalcStarPowerVisible();
-            // If visible star power state didn't change, skip
-            if (IsStarPowerVisible == shouldShowStarPower) return;
-
             // If we did have star power and the user lost it (or vice versa), then swap the model out
             int index = Array.IndexOf(IsStarPowerVisible ? StarPowerNoteGroups : NoteGroups, NoteGroup);
             if (index != -1)
@@ -90,9 +84,7 @@ namespace YARG.Gameplay.Visuals
                 NoteGroup = (IsStarPowerVisible ? NoteGroups : StarPowerNoteGroups)[index];
                 NoteGroup.SetActive(true);
                 NoteGroup.Initialize();
-
             }
-            IsStarPowerVisible = shouldShowStarPower;
         }
 
         /// <summary>

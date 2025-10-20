@@ -76,7 +76,7 @@ namespace YARG.Gameplay.Visuals
             UpdateColor();
         }
 
-        private void UpdateColor()
+        protected override void UpdateColor()
         {
             var colors = Player.Player.ColorProfile.FourLaneDrums;
 

@@ -103,6 +103,15 @@ namespace YARG.Gameplay.Visuals
             }
         }
 
+        protected abstract void UpdateColor();
+
+        public override void OnStarPowerUpdated()
+        {
+            base.OnStarPowerUpdated();
+
+            UpdateColor();
+        }
+
         protected static int GetColorFromPulse(int color, float pulse)
         {
             float intensity = Mathf.Pow(pulse - 1, 3) + 1f;
