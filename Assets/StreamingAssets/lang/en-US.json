@@ -1311,9 +1311,9 @@
                 "Name": "Enable Track Effects",
                 "Description": "If enabled, the game will display track effects for unison, solo, and drum SP activation phrases."
             },
-            "EnableHighwayRaise": {
-                "Name": "Enable Highway Raise Animation",
-                "Description": "If enabled, the game will raise and lower the highway when the song starts or ends."
+            "EnableHighwayAnimation": {
+                "Name": "Enable Highway Animation",
+                "Description": "If enabled, the highway will animate at the beginning and end of the song and based on performance."
             },
             "EnableVoxSamples": {
                 "Name": "Enable Vox Samples",

@@ -144,7 +144,7 @@ namespace YARG.Settings
                 nameof(Settings.StaticVocalsMode),
                 nameof(Settings.UseThreeLaneLyricsInHarmony),
                 nameof(Settings.EnableTrackEffects),
-                nameof(Settings.EnableHighwayRaise),
+                nameof(Settings.EnableHighwayAnimation),
                 nameof(Settings.KickBounceMultiplier),
                 nameof(Settings.HighwayTiltMultiplier),
 
