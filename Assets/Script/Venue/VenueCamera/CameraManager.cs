@@ -114,6 +114,15 @@ namespace YARG.Venue.VenueCamera
             var cameras = _venue.GetComponentsInChildren<Camera>(true);
             _cameras = cameras.ToList();
 
+            // If the camera doesn't already have the VenueCameraManager component, add it
+            foreach (var camera in cameras)
+            {
+                if (camera.GetComponent<VenueCameraManager>() == null)
+                {
+                    camera.gameObject.AddComponent<VenueCameraManager>();
+                }
+            }
+
             // Make sure the stage camera is the only one active to start..and put them in a dictionary
             bool foundStage = false;
             foreach (var camera in cameras)
