@@ -37,7 +37,7 @@ namespace YARG.Venue
 
         public void SetupVenueCamera(GameObject bgInstance)
         {
-            mainCamera.gameObject.AddComponent<VenueCameraHelper>();
+            mainCamera.gameObject.AddComponent<VenueCameraRenderer>();
             var fsrManager = mainCamera.GetComponent<FSRCameraManager>();
             if (fsrManager != null)
             {
