@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 using YARG.Core.Chart;
 using YARG.Core.Extensions;
 using YARG.Core.Logging;
 using YARG.Gameplay;
 using YARG.Helpers.Extensions;
+using YARG.Settings;
 using Random = UnityEngine.Random;
 
 namespace YARG.Venue.VenueCamera
@@ -117,9 +122,9 @@ namespace YARG.Venue.VenueCamera
             // If the camera doesn't already have the VenueCameraManager component, add it
             foreach (var camera in cameras)
             {
-                if (camera.GetComponent<VenueCameraManager>() == null)
+                if (camera.GetComponent<VenueCameraHelper>() == null)
                 {
-                    camera.gameObject.AddComponent<VenueCameraManager>();
+                    camera.gameObject.AddComponent<VenueCameraHelper>();
                 }
             }
 
@@ -167,7 +172,7 @@ namespace YARG.Venue.VenueCamera
 
                 if (vc.CameraLocation == CameraLocation.Stage && !foundStage)
                 {
-                    camera.enabled = true;
+                    // We're setting _currentCamera here so we can avoid checking for null in SwitchCamera
                     _currentCamera = camera;
                     _cameraTimer = GetRandomCameraTimer();
                     _cameraIndex = _cameras.IndexOf(camera);
@@ -188,6 +193,8 @@ namespace YARG.Venue.VenueCamera
             CurrentEffect = firstEffect;
 
             InitializePostProcessing();
+
+            SwitchCamera(_currentCamera);
         }
 
         private void Update()
@@ -217,22 +224,21 @@ namespace YARG.Venue.VenueCamera
 
         private void SwitchCamera(Camera newCamera, bool random = false)
         {
-            _currentCamera.enabled = false;
+            // _currentCamera.enabled = false;
+            _currentCamera.gameObject.SetActive(false);
 
             if (random)
             {
                 _cameraTimer = GetRandomCameraTimer();
                 _currentCamera = GetRandomCamera();
-                _cameraIndex = _cameras.IndexOf(_currentCamera);
-                _currentCamera.enabled = true;
             }
             else
             {
                 _currentCamera = newCamera;
-                _currentCamera.enabled = true;
-                _cameraIndex = _cameras.IndexOf(newCamera);
                 _cameraTimer = _cameraTimer = Mathf.Max(11f, (float) _cameraCuts[_currentCutIndex].TimeLength);
             }
+            _currentCamera.gameObject.SetActive(true);
+            _cameraIndex = _cameras.IndexOf(_currentCamera);
         }
 
         private float GetRandomCameraTimer()

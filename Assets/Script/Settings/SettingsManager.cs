@@ -127,6 +127,7 @@ namespace YARG.Settings
                 new HeaderMetadata("Display"),
                 nameof(Settings.VSync),
                 nameof(Settings.FpsCap),
+                nameof(Settings.VenueFpsCap),
                 nameof(Settings.FullscreenMode),
                 nameof(Settings.Resolution),
                 nameof(Settings.FpsStats),

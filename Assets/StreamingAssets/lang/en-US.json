@@ -1118,6 +1118,10 @@
                 "Name": "Use Whammy SFX",
                 "Description": "If enabled, it will add pitch bending to guitar stems when the player presses the whammy bar.\nWARNING: This setting is known to cause audio desync issues on some machines."
             },
+            "VenueFpsCap": {
+                "Name": "Venue FPS Cap",
+                "Description": "The framerate cap for venue backgrounds. Lower this to reduce GPU usage."
+            },
             "WhammyPitchShiftAmount": {
                 "Name": "Whammy Pitch Shift Amount",
                 "Description": "Number of semitones the pitch is changed when the whammy bar is fully pressed. Larger amounts result in lower pitches; default is \"1\"."
