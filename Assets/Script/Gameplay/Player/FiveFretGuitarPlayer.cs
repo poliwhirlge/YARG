@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using YARG.Assets.Script.Gameplay.Player;
 using YARG.Core;
 using YARG.Core.Audio;
 using YARG.Core.Chart;
-using YARG.Core.Engine;
 using YARG.Core.Engine.Guitar;
 using YARG.Core.Engine.Guitar.Engines;
 using YARG.Core.Input;
@@ -120,7 +118,7 @@ namespace YARG.Gameplay.Player
             }
 
             var engine = new YargFiveFretGuitarEngine(NoteTrack, SyncTrack, EngineParams, Player.Profile.IsBot);
-            EngineContainer = GameManager.EngineManager.Register(engine, NoteTrack.Instrument, Chart);
+            EngineContainer = GameManager.EngineManager.Register(engine, NoteTrack.Instrument, Chart, Player.RockMeterPreset);
 
             HitWindow = EngineParams.HitWindow;
 
@@ -140,13 +138,6 @@ namespace YARG.Gameplay.Player
             engine.OnStarPowerStatus += OnStarPowerStatus;
 
             engine.OnCountdownChange += OnCountdownChange;
-
-            if (!GlobalVariables.State.IsPractice)
-            {
-                EngineContainer.OnSongFailed += OnSongFailed;
-                EngineContainer.OnHappinessOverThreshold += OnHappinessOverThreshold;
-                EngineContainer.OnHappinessUnderThreshold += OnHappinessUnderThreshold;
-            }
 
             return engine;
         }

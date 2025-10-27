@@ -2,6 +2,7 @@
 using UnityEngine;
 using YARG.Core.Chart;
 using YARG.Core.Engine;
+using YARG.Core.Engine.Drums;
 using YARG.Gameplay.Player;
 using YARG.Themes;
 
@@ -47,6 +48,15 @@ namespace YARG.Gameplay.Visuals
             ParentPool.Return(this);
         }
 
+        protected override bool CalcStarPowerVisible()
+        {
+            if (!NoteRef.IsStarPower)
+            {
+                return false;
+            }
+            return !(((DrumsEngineParameters) Player.BaseParameters).NoStarPowerOverlap && Player.BaseStats.IsStarPowerActive);
+        }
+
         protected override void HideElement()
         {
             HideNotes();
@@ -78,6 +88,15 @@ namespace YARG.Gameplay.Visuals
                     gameObject.transform.localScale = Vector3.Scale(transform.localScale, _splitScale);
                 }
             }
+        }
+
+        protected abstract void UpdateColor();
+
+        public override void OnStarPowerUpdated()
+        {
+            base.OnStarPowerUpdated();
+
+            UpdateColor();
         }
 
         protected static int GetColorFromPulse(int color, float pulse)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,7 +24,13 @@ namespace YARG.Gameplay.Player
         public const float DEFAULT_ZERO_FADE_POS = 3f;
         public const float NOTE_SPAWN_OFFSET     = 5f;
 
-        public const float TRACK_WIDTH = 2f;
+        public const float TRACK_WIDTH  = 2f;
+        public const float TRACK_HEIGHT = 100f;
+
+        public const float HUD_TOP_ELEMENT_HEIGHT = 0.15f;
+        public const float HUD_CENTER_ELEMENT_DEPTH = 1.5f;
+
+        public static int HighwayCount = 1;
 
         public double SpawnTimeOffset => (ZeroFadePosition + _spawnAheadDelay + -STRIKE_LINE_POS) / NoteSpeed;
 
@@ -65,7 +71,15 @@ namespace YARG.Gameplay.Player
         public float ZeroFadePosition { get; private set; }
         public float FadeSize         { get; private set; }
 
-        public Vector2 HUDViewportPosition => TrackCamera.WorldToViewportPoint(_hudLocation.position);
+        // Multiply by the reciprocal of 1 / player count to prevent the HUD from being too close to the highway;
+        public Vector2 HUDTopElementViewportPosition =>
+            TrackCamera.WorldToViewportPoint(_hudLocation.position.WithY(
+                HUD_TOP_ELEMENT_HEIGHT * (1 / HighwayCameraRendering.CalculateScale(HighwayCount)) + TRACK_HEIGHT));
+
+        public Vector2 HUDCenterElementViewportPosition =>
+            TrackCamera.WorldToViewportPoint(_hudLocation.position
+                .WithY(TRACK_HEIGHT)
+                .WithZ(STRIKE_LINE_POS + HUD_CENTER_ELEMENT_DEPTH));
 
         protected List<Beatline> Beatlines;
 
@@ -74,6 +88,8 @@ namespace YARG.Gameplay.Player
         protected bool IsBass { get; private set; }
 
         private float _spawnAheadDelay;
+
+        protected float SongLength;
 
         public virtual void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView,
             StemMixer mixer, int? lastHighScore)
@@ -158,6 +174,9 @@ namespace YARG.Gameplay.Player
 
         private double _previousStarPowerAmount;
 
+        private bool _wasStarPowerActive;
+        private bool _didLowerTrack;
+
         private Queue<TrackEffect> _upcomingEffects = new();
         private List<TrackEffectElement> _currentEffects = new();
         protected List<TrackEffect> _trackEffects = new();
@@ -171,6 +190,20 @@ namespace YARG.Gameplay.Player
             {
                 return;
             }
+
+            // Get player count
+            if (index == 0)
+            {
+                // Reset
+                HighwayCount = 1;
+            }
+            else if (index + 1 > HighwayCount)
+            {
+                HighwayCount = index + 1;
+            }
+
+            // Consolidate tracks into a parent object for animation purposes
+            transform.SetParent(GameObject.Find("Visuals").transform);
 
             base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
 
@@ -213,6 +246,8 @@ namespace YARG.Gameplay.Player
             ResetNoteCounters();
 
             FinishInitialization();
+
+            SongLength = (float) chart.GetEndTime();
         }
 
         protected override void FinishDestruction()
@@ -318,6 +353,9 @@ namespace YARG.Gameplay.Player
 
         protected override void UpdateVisuals(double visualTime)
         {
+            // Allow the HUD to track the highway with animations
+            TrackView.UpdateHUDPosition(HighwayIndex, HighwayCount);
+
             UpdateNotes(visualTime);
             UpdateBeatlines(visualTime);
             UpdateTrackEffects(visualTime);
@@ -374,11 +412,25 @@ namespace YARG.Gameplay.Player
                 TrackView.ShowStarPowerReady();
             }
 
+            if (stats.IsStarPowerActive && !_wasStarPowerActive && !_didLowerTrack)
+            {
+                CameraPositioner.Scoop();
+            }
+
             _previousStarPowerAmount = currentStarPowerAmount;
+            _wasStarPowerActive = stats.IsStarPowerActive;
 
             foreach (var haptics in SantrollerHaptics)
             {
                 haptics.SetStarPowerFill((float) currentStarPowerAmount);
+            }
+
+            bool isSongEnd = visualTime > SongLength;
+            bool shouldLowerTrack = isSongEnd || GameManager.PlayerHasFailed;
+            if (!_didLowerTrack && shouldLowerTrack)
+            {
+                _didLowerTrack = true;
+                CameraPositioner.Lower(isSongEnd);
             }
         }
 
@@ -723,6 +775,7 @@ namespace YARG.Gameplay.Player
                 if (LastCombo >= 10)
                 {
                     GlobalAudioHandler.PlaySoundEffect(SfxSample.NoteMiss);
+                    CameraPositioner.Punch();
                 }
 
                 foreach (var haptics in SantrollerHaptics)
@@ -740,6 +793,11 @@ namespace YARG.Gameplay.Player
             {
                 ComboMeter.SetFullCombo(false);
                 IsFc = false;
+            }
+
+            if (LastCombo >= 10)
+            {
+                CameraPositioner.Punch();
             }
 
             LastCombo = Combo;

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -6,6 +5,7 @@ using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using UnityEngine;
 using YARG.Core.Audio;
+using YARG.Playback;
 using YARG.Settings;
 
 namespace YARG.Gameplay
@@ -89,10 +89,9 @@ namespace YARG.Gameplay
             }
         }
 
-        private readonly Dictionary<SongStem, StemState> _stemStates = new();
-        private SongStem _backgroundStem;
-        private int _starPowerActivations = 0;
-        private TweenerCore<double, double, NoOptions> _volumeTween;
+        private readonly Dictionary<SongStem, StemState>        _stemStates = new();
+        private          SongStem                               _backgroundStem;
+        private          TweenerCore<double, double, NoOptions> _volumeTween;
 
         private void LoadAudio()
         {
@@ -132,24 +131,14 @@ namespace YARG.Gameplay
             _backgroundStem = _stemStates.Count > 1 ? SongStem.Song : _stemStates.First().Key;
         }
 
-        private void StarPowerClap()
-        {
-            if (_starPowerActivations < 1)
-            {
-                return;
-            }
-
-            GlobalAudioHandler.PlaySoundEffect(SfxSample.Clap);
-        }
-
         public void ChangeStarPowerStatus(bool active)
         {
-            if (!SettingsManager.Settings.ClapsInStarpower.Value)
+            if (SettingsManager.Settings.UseCrowdFx.Value == CrowdFxMode.Disabled)
                 return;
 
-            _starPowerActivations += active ? 1 : -1;
-            if (_starPowerActivations < 0)
-                _starPowerActivations = 0;
+            StarPowerActivations += active ? 1 : -1;
+            if (StarPowerActivations < 0)
+                StarPowerActivations = 0;
         }
 
         public void ChangeStemMuteState(SongStem stem, bool muted, float duration = 0.0f)
