@@ -56,7 +56,6 @@ namespace YARG.Gameplay
             _renderCamera.enabled = false;
 
             _renderCamera.allowMSAA = false;
-            RenderPipelineManager.beginCameraRendering += OnPreCameraRender;
             var cameraData = _renderCamera.GetUniversalAdditionalCameraData();
             cameraData.antialiasing = AntialiasingMode.None;
             switch (GraphicsManager.Instance.VenueAntiAliasing)
@@ -74,7 +73,6 @@ namespace YARG.Gameplay
                     _renderCamera.gameObject.AddComponent<FSRCameraManager>();
                     break;
             }
-            RenderPipelineManager.endCameraRendering += OnPostCameraRender;
             UniversalRenderPipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             _originalFactor = UniversalRenderPipelineAsset.renderScale;
 
@@ -88,7 +86,9 @@ namespace YARG.Gameplay
 
                 if (_venueOutput != null)
                 {
-                    _venueTexture = new RenderTexture(Screen.width, Screen.height, 0);
+                    var outputWidth = (int)(Screen.width * renderScale);
+                    var outputHeight = (int)(Screen.height * renderScale);
+                    _venueTexture = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.DefaultHDR);
                     _venueOutput.texture = _venueTexture;
 
                     _trailsTexture = new RenderTexture(_venueTexture);
@@ -122,9 +122,6 @@ namespace YARG.Gameplay
 
         private void OnDisable()
         {
-            RenderPipelineManager.beginCameraRendering -= OnPreCameraRender;
-            RenderPipelineManager.endCameraRendering -= OnPostCameraRender;
-
             activeInstances--;
 
             if (activeInstances == 0)
@@ -252,22 +249,6 @@ namespace YARG.Gameplay
                 {
                     break;
                 }
-            }
-        }
-
-        private void OnPreCameraRender(ScriptableRenderContext ctx, Camera cam)
-        {
-            if (cam == _renderCamera)
-            {
-                UniversalRenderPipelineAsset.renderScale = renderScale;
-            }
-        }
-
-        private void OnPostCameraRender(ScriptableRenderContext ctx, Camera cam)
-        {
-            if (cam == _renderCamera)
-            {
-                UniversalRenderPipelineAsset.renderScale = _originalFactor;
             }
         }
 
