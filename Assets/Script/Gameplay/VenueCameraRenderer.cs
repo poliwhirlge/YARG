@@ -26,7 +26,6 @@ namespace YARG.Gameplay
         private static RenderTexture           _venueTexture;
         private static RenderTexture           _trailsTexture;
         private static CancellationTokenSource _cts;
-        private static int                     activeInstances = 0;
 
         private static Material _trailsMaterial;
         private static Material _scanlineMaterial;
@@ -43,10 +42,27 @@ namespace YARG.Gameplay
 
         private static readonly string[] _mirrorKeywords = { "LEFT", "RIGHT", "CLOCK_CCW", "NONE" };
 
+        public static float ActualFPS;
+        public static float TargetFPS;
+
         private int _fps;
+        private int FPS
+        {
+            get => _fps;
+            set
+            {
+                _fps = value;
+                TargetFPS = value;
+            }
+        }
+
         private int _venueLayerMask;
 
         private bool _didRender;
+
+        private int   _frameCount;
+        private float _elapsedTime;
+        private static float _timeSinceLastRender;
 
         private void Awake()
         {
@@ -76,7 +92,7 @@ namespace YARG.Gameplay
             UniversalRenderPipelineAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             _originalFactor = UniversalRenderPipelineAsset.renderScale;
 
-            _fps = SettingsManager.Settings.VenueFpsCap.Value;
+            FPS = SettingsManager.Settings.VenueFpsCap.Value;
             _venueLayerMask = LayerMask.GetMask("Venue");
 
             var venueOutputObject = GameObject.Find("Venue Output");
@@ -105,37 +121,12 @@ namespace YARG.Gameplay
 
         private void OnEnable()
         {
-            activeInstances++;
-
-            if (activeInstances == 1)
-            {
-
-            }
-
-            _cts?.Cancel();
-            _cts?.Dispose();
-
-            _fps = SettingsManager.Settings.VenueFpsCap.Value;
-            _cts = new CancellationTokenSource();
-            RenderLoop(_cts.Token).Forget();
-        }
-
-        private void OnDisable()
-        {
-            activeInstances--;
-
-            if (activeInstances == 0)
-            {
-                _cts?.Cancel();
-                _cts?.Dispose();
-                _cts = null;
-            }
+            FPS = SettingsManager.Settings.VenueFpsCap.Value;
+            _timeSinceLastRender = 0f;
         }
 
         private void OnDestroy()
         {
-            UniversalRenderPipelineAsset.renderScale = _originalFactor;
-
             if (_venueTexture != null)
             {
                 _venueTexture.Release();
@@ -157,99 +148,118 @@ namespace YARG.Gameplay
             CoreUtils.Destroy(_alphaClearMaterial);
         }
 
-        private async UniTask RenderLoop(CancellationToken token)
+        private void Update()
         {
-            while (!token.IsCancellationRequested)
+            var stack = VolumeManager.instance.stack;
+
+            VolumeManager.instance.Update(_renderCamera.gameObject.transform, _venueLayerMask);
+
+            var effectiveFps = FPS;
+
+            var fpsEffect = stack.GetComponent<SlowFPSComponent>();
+
+            if (fpsEffect.IsActive())
             {
-                TimeSpan interval;
-                var stack = VolumeManager.instance.stack;
-
-                VolumeManager.instance.Update(_renderCamera.gameObject.transform, _venueLayerMask);
-
-                var effectiveFps = _fps;
-
-                var fpsEffect = stack.GetComponent<SlowFPSComponent>();
-
-                if (fpsEffect.IsActive())
-                {
-                    // The divisor is relative to 60 fps, so we need to adjust for that if _fps is something other than 60
-                    var fpsRatio = _fps / 60f;
-                    var adjustedDivisor = fpsRatio * fpsEffect.Divisor.value;
-                    effectiveFps = Mathf.RoundToInt(_fps / adjustedDivisor);
-                    interval = TimeSpan.FromSeconds(1f / effectiveFps);
-                }
-                else
-                {
-                    interval = TimeSpan.FromSeconds(1f / _fps);
-                }
-
-                var descriptor = new RenderTextureDescriptor(_venueTexture.width, _venueTexture.height, _venueTexture.format);
-                var rt1 = RenderTexture.GetTemporary(descriptor);
-                var rt2 = RenderTexture.GetTemporary(descriptor);
-
-                _renderCamera.targetTexture = rt1;
-                _renderCamera.Render();
-
-                RenderTargetIdentifier currentSource = rt1;
-                RenderTargetIdentifier currentDest = rt2;
-
-                var cmd = CommandBufferPool.Get("Venue Post Process");
-
-                var trailsEffect = stack.GetComponent<TrailsComponent>();
-                if (trailsEffect.IsActive() && _trailsMaterial != null)
-                {
-                    var adjustedLength = Mathf.Pow(trailsEffect.Length, effectiveFps / 60f);
-
-                    _trailsMaterial.SetFloat(_trailsLengthId, adjustedLength);
-                    cmd.Blit(currentSource, _trailsTexture, _trailsMaterial);
-                    currentSource = _trailsTexture;
-                }
-
-                var posterizeEffect = stack.GetComponent<PosterizeComponent>();
-                if (posterizeEffect.IsActive() && _posterizeMaterial != null)
-                {
-                    _posterizeMaterial.SetInteger(_posterizeStepsId, posterizeEffect.Steps.value);
-                    cmd.Blit(currentSource, currentDest, _posterizeMaterial);
-                    (currentSource, currentDest) = (currentDest, currentSource);
-                }
-
-                var mirrorEffect = stack.GetComponent<MirrorComponent>();
-                if (mirrorEffect.IsActive() && _mirrorMaterial != null)
-                {
-                    _mirrorMaterial.EnableKeyword(_mirrorKeywords[mirrorEffect.wipeIndex.value]);
-                    _mirrorMaterial.SetFloat(_wipeTimeId, mirrorEffect.wipeTime.value);
-                    _mirrorMaterial.SetFloat(_startTimeId, mirrorEffect.startTime.value);
-                    cmd.Blit(currentSource, currentDest, _mirrorMaterial);
-                    (currentSource, currentDest) = (currentDest, currentSource);
-                }
-
-                var scanlineEffect = stack.GetComponent<ScanlineComponent>();
-                if (scanlineEffect.IsActive() && _scanlineMaterial != null)
-                {
-                    _scanlineMaterial.SetFloat(_scanlineIntensityId, scanlineEffect.intensity.value);
-                    _scanlineMaterial.SetInt(_scanlineSizeId, scanlineEffect.scanlineCount.value);
-                    cmd.Blit(currentSource, currentDest, _scanlineMaterial);
-                    (currentSource, currentDest) = (currentDest, currentSource);
-                }
-
-                // Now blit the combined effects to the output texture (while clearing alpha)
-                cmd.Blit(currentSource, _venueTexture, _alphaClearMaterial);
-
-                Graphics.ExecuteCommandBuffer(cmd);
-                CommandBufferPool.Release(cmd);
-
-                RenderTexture.ReleaseTemporary(rt1);
-                RenderTexture.ReleaseTemporary(rt2);
-
-                try
-                {
-                    await UniTask.Delay(interval, cancellationToken: token);
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
+                // The divisor is relative to 60 fps, so we need to adjust for that if FPS is something other than 60
+                // TODO: Consider using ActualFPS here
+                var fpsRatio = FPS / 60f;
+                var adjustedDivisor = fpsRatio * fpsEffect.Divisor.value;
+                effectiveFps = Mathf.RoundToInt(FPS / adjustedDivisor);
+                // Don't allow a rate higher than the FPS cap
+                effectiveFps = Mathf.Min(FPS, effectiveFps);
             }
+
+            // Increment wall clock time regardless of whether we render a frame
+            _timeSinceLastRender += Time.unscaledDeltaTime;
+            _elapsedTime += Time.unscaledDeltaTime;
+
+            float targetInterval = 1f / effectiveFps;
+
+            if (_timeSinceLastRender >= targetInterval)
+            {
+                Render(effectiveFps);
+
+                _timeSinceLastRender -= targetInterval;
+
+                // Check to see if we are too far behind..if so, make sure we render next update
+                if (_timeSinceLastRender > targetInterval)
+                {
+                    _timeSinceLastRender = 0f;
+                }
+
+                _frameCount++;
+            }
+
+            // Update FPS counter
+            if (_elapsedTime >= 1f)
+            {
+                ActualFPS = _frameCount / _elapsedTime;
+                _frameCount = 0;
+                _elapsedTime = 0f;
+            }
+        }
+
+        private void Render(int effectiveFps)
+        {
+            var stack = VolumeManager.instance.stack;
+
+            var descriptor = new RenderTextureDescriptor(_venueTexture.width, _venueTexture.height, _venueTexture.format);
+            var rt1 = RenderTexture.GetTemporary(descriptor);
+            var rt2 = RenderTexture.GetTemporary(descriptor);
+
+            _renderCamera.targetTexture = rt1;
+            _renderCamera.Render();
+
+            RenderTargetIdentifier currentSource = rt1;
+            RenderTargetIdentifier currentDest = rt2;
+
+            var cmd = CommandBufferPool.Get("Venue Post Process");
+
+            var trailsEffect = stack.GetComponent<TrailsComponent>();
+            if (trailsEffect.IsActive() && _trailsMaterial != null)
+            {
+                var adjustedLength = Mathf.Pow(trailsEffect.Length, effectiveFps / 60f);
+
+                _trailsMaterial.SetFloat(_trailsLengthId, adjustedLength);
+                cmd.Blit(currentSource, _trailsTexture, _trailsMaterial);
+                currentSource = _trailsTexture;
+            }
+
+            var posterizeEffect = stack.GetComponent<PosterizeComponent>();
+            if (posterizeEffect.IsActive() && _posterizeMaterial != null)
+            {
+                _posterizeMaterial.SetInteger(_posterizeStepsId, posterizeEffect.Steps.value);
+                cmd.Blit(currentSource, currentDest, _posterizeMaterial);
+                (currentSource, currentDest) = (currentDest, currentSource);
+            }
+
+            var mirrorEffect = stack.GetComponent<MirrorComponent>();
+            if (mirrorEffect.IsActive() && _mirrorMaterial != null)
+            {
+                _mirrorMaterial.EnableKeyword(_mirrorKeywords[mirrorEffect.wipeIndex.value]);
+                _mirrorMaterial.SetFloat(_wipeTimeId, mirrorEffect.wipeTime.value);
+                _mirrorMaterial.SetFloat(_startTimeId, mirrorEffect.startTime.value);
+                cmd.Blit(currentSource, currentDest, _mirrorMaterial);
+                (currentSource, currentDest) = (currentDest, currentSource);
+            }
+
+            var scanlineEffect = stack.GetComponent<ScanlineComponent>();
+            if (scanlineEffect.IsActive() && _scanlineMaterial != null)
+            {
+                _scanlineMaterial.SetFloat(_scanlineIntensityId, scanlineEffect.intensity.value);
+                _scanlineMaterial.SetInt(_scanlineSizeId, scanlineEffect.scanlineCount.value);
+                cmd.Blit(currentSource, currentDest, _scanlineMaterial);
+                (currentSource, currentDest) = (currentDest, currentSource);
+            }
+
+            // Now blit the combined effects to the output texture (while clearing alpha)
+            cmd.Blit(currentSource, _venueTexture, _alphaClearMaterial);
+
+            Graphics.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
+
+            RenderTexture.ReleaseTemporary(rt1);
+            RenderTexture.ReleaseTemporary(rt2);
         }
 
         private void CreateMaterials()
