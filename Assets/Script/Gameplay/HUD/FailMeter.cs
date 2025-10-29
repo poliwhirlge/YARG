@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Rendering.VirtualTexturing;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using YARG.Core.Engine;
 using YARG.Core.Game;
 using YARG.Core.Logging;
 using YARG.Helpers.Extensions;
-using YARG.Settings;
 
 namespace YARG.Gameplay.HUD
 {
@@ -47,12 +44,7 @@ namespace YARG.Gameplay.HUD
 
         private MeterColor _previousMeterColor;
 
-        private Vector2[] _playerPositions;
         private Vector2[] _xPosVectors;
-
-        private Vector3 _initialPosition;
-
-        private float _containerHeight;
 
         private bool _intendedActive;
 
@@ -61,7 +53,7 @@ namespace YARG.Gameplay.HUD
         private EngineManager _engineManager;
         private GameManager _gameManager;
 
-        private List<EngineManager.EngineContainer> _players = new();
+        private readonly List<EngineManager.EngineContainer> _players = new();
 
         // Allows some overlap
         private const float HAPPINESS_COLLISION_RANGE = 0.06f;
@@ -81,11 +73,7 @@ namespace YARG.Gameplay.HUD
             _playerHappinessTweeners = new Tweener[_players.Count];
             _needleHappinessTweeners = new Tweener[_players.Count];
             _previousPlayerHappiness = new float[_players.Count];
-            _playerPositions = new Vector2[_players.Count];
             _xPosVectors = new Vector2[_players.Count];
-            _containerHeight = _sliderContainer.rect.height;
-
-            _initialPosition = _meterContainer.transform.position;
 
             // Cache tweens for later use
             _meterRedTweener = _fillImage.DOColor(ColorProfile.DefaultRed.ToUnityColor(), 0.25f).
@@ -122,7 +110,6 @@ namespace YARG.Gameplay.HUD
 
                 _xposTweeners[i] = _playerSliders[i].handleRect.DOAnchorPosX(_xPosVectors[i].x, 0.125f).SetAutoKill(false);
                 _needleSliders[i].handleRect.DOAnchorPosX(SPRITE_INITIAL_OFFSET, 0.125f).SetAutoKill(false);
-                _playerPositions[i] = _playerSliders[i].handleRect.transform.position;
 
                 var handleImage = _playerSliders[i].handleRect.GetComponentInChildren<Image>();
                 var spriteName = _players[i].GetInstrumentSprite();
@@ -167,8 +154,6 @@ namespace YARG.Gameplay.HUD
 
             for (var i = 0; i < _players.Count; i++)
             {
-                // Convert happiness to a new y value
-                float newY = (_containerHeight * _players[i].Happiness) + (_sliderContainer.position.y - (_containerHeight / 2));
                 int overlap = 0;
                 // Check if we will overlap another icon
                 for (var j = i; j < _players.Count; j++)
@@ -190,9 +175,6 @@ namespace YARG.Gameplay.HUD
                 _xPosVectors[i].x = xOffset;
 
                 _xposTweeners[i].ChangeEndValue(_xPosVectors[i], 0.125f, true).Play();
-
-                // We only need the x, y so it's fine that we're converting Vector3 to Vector2 here
-                _playerPositions[i] = _playerSliders[i].handleRect.transform.position;
 
                 // This we can not do if the current player's happiness hasn't changed
                 if (_previousPlayerHappiness[i] != _players[i].Happiness)
