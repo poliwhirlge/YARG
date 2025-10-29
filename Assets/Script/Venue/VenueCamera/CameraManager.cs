@@ -206,6 +206,8 @@ namespace YARG.Venue.VenueCamera
             InitializeVolume();
 
             SwitchCamera(_currentCamera, _cameraCuts.Count < 1);
+
+            GameManager.SetVenueCameraManager(this);
         }
 
         private void InitializeVolume()
@@ -250,9 +252,14 @@ namespace YARG.Venue.VenueCamera
             }
 
             // Check for cut events
-            if (_currentCutIndex < _cameraCuts.Count && _cameraCuts[_currentCutIndex].Time <= GameManager.VisualTime)
+            while (_currentCutIndex < _cameraCuts.Count && _cameraCuts[_currentCutIndex].Time <= GameManager.VisualTime)
             {
-                SwitchCamera(MapSubjectToValidCamera(_cameraCuts[_currentCutIndex]));
+                var cut = _cameraCuts[_currentCutIndex];
+                if (GameManager.VisualTime >= cut.Time && GameManager.VisualTime <= cut.TimeEnd)
+                {
+                    SwitchCamera(MapSubjectToValidCamera(cut));
+                }
+
                 _currentCutIndex++;
             }
 
@@ -263,6 +270,23 @@ namespace YARG.Venue.VenueCamera
                 YargLogger.LogDebug("Changing camera due to timer expiry");
                 SwitchCamera(GetRandomCamera(), true);
             }
+        }
+
+        public void ResetTime(double time)
+        {
+            // Reset camera cut index
+            _currentCutIndex = 0;
+            while (_currentCutIndex < _cameraCuts.Count && _cameraCuts[_currentCutIndex].Time < time)
+            {
+                _currentCutIndex++;
+            }
+
+            if (_currentCutIndex < _cameraCuts.Count && _cameras.Count > 1)
+            {
+                SwitchCamera(MapSubjectToValidCamera(_cameraCuts[_currentCutIndex]));
+            }
+
+            ResetPostProcessing(time);
         }
 
         private void SwitchCamera(Camera newCamera, bool random = false)
