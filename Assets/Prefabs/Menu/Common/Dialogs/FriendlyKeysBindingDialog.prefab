@@ -2084,6 +2084,41 @@ PrefabInstance:
       propertyPath: m_VerticalAlignment
       value: 256
       objectReference: {fileID: 0}
+    - target: {fileID: 4658078872165004223, guid: 1818ada90b0e3a44bac5b30bca3fde57,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658078872165004223, guid: 1818ada90b0e3a44bac5b30bca3fde57,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658078872165004223, guid: 1818ada90b0e3a44bac5b30bca3fde57,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2758766270758023739}
+    - target: {fileID: 4658078872165004223, guid: 1818ada90b0e3a44bac5b30bca3fde57,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658078872165004223, guid: 1818ada90b0e3a44bac5b30bca3fde57,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnCancelButtonPressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658078872165004223, guid: 1818ada90b0e3a44bac5b30bca3fde57,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: YARG.Menu.Dialogs.FriendlyBindingDialog, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658078872165004223, guid: 1818ada90b0e3a44bac5b30bca3fde57,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4732085678758495887, guid: 1818ada90b0e3a44bac5b30bca3fde57,
         type: 3}
       propertyPath: m_IsActive
@@ -2344,7 +2379,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4625805653512563105}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b1674a7d2514f08837a5edb79d1c6fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 86cada068d634c07976b94aafe22fbfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogButtonContainer: {fileID: 4274855220174160216}
@@ -2353,7 +2388,8 @@ MonoBehaviour:
     type: 3}
   <Title>k__BackingField: {fileID: 3751589942787296530}
   <Message>k__BackingField: {fileID: 6054121155834514996}
-  _imageContainer: {fileID: 0}
+  ImageContainer: {fileID: 6825990741589661933}
+  Image: {fileID: 7076800607793183503}
   _keyHighlights:
   - {fileID: 4665337479818388756}
   - {fileID: 3080429880532332824}
@@ -2380,6 +2416,8 @@ MonoBehaviour:
   - {fileID: 5498411773241414883}
   - {fileID: 8090179509466882822}
   - {fileID: 6655966578917579850}
+  _startButton: {fileID: 0}
+  _cancelButton: {fileID: 0}
 --- !u!114 &5824046960454132601 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3822882854416478517, guid: 1818ada90b0e3a44bac5b30bca3fde57,
