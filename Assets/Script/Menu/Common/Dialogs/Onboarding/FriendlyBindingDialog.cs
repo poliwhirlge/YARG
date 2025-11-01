@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using YARG.Core;
 using YARG.Core.Logging;
@@ -21,7 +23,8 @@ namespace YARG.Menu.Dialogs
     /// </summary>
     public abstract class FriendlyBindingDialog : ImageDialog
     {
-        // I can't really think of a better way to do this than have key highlights defined and positioned in the editor
+        [SerializeField]
+        protected TextMeshProUGUI ControlText;
         [SerializeField]
         protected Image[] _keyHighlights;
 
@@ -32,15 +35,9 @@ namespace YARG.Menu.Dialogs
 
         protected GameMode _mode;
 
-        // TODO: Refactor this so that InputControlDialogMenu and this can share
-        //  duplicated code is bad.....mmkay?
-
-        protected UniTask<bool>           _bindingTask;
         protected CancellationTokenSource _cancellationTokenSource;
         protected CancellationTokenSource _bindingTokenSource;
-        protected CancellationToken       _loopToken;
         protected State                   _state;
-        protected ControlBinding          _binding;
         protected ActuationSettings       _bindSettings    = new();
 
         protected BindingCollection _bindingCollection;
@@ -52,6 +49,7 @@ namespace YARG.Menu.Dialogs
             base.Initialize();
 
             Message.text = BindingMessages.initial;
+            ControlText.text = "";
 
             // Make sure all the highlights are disabled
             foreach (var key in _keyHighlights)
@@ -92,7 +90,6 @@ namespace YARG.Menu.Dialogs
 
             _player.Bindings.ClearBindingsForDevice(_device, false);
 
-            // TODO: _controlBinding needs to be set for this to work
             _cancelButton.Text.text = Localize.Key("Menu.Dialog.FriendlyBindingDialog.Skip");
             _cancellationTokenSource = new CancellationTokenSource();
             bool success;
@@ -103,6 +100,10 @@ namespace YARG.Menu.Dialogs
             catch (OperationCanceledException)
             {
                 _bindingTokenSource.Cancel();
+            }
+            finally
+            {
+                ControlText.text = "";
             }
 
             // TODO: if failed, we should show an error message of some sort
@@ -143,6 +144,8 @@ namespace YARG.Menu.Dialogs
                 {
                     continue;
                 }
+
+                ControlText.text = Localize.Key("Bindings", key);
 
                 List<InputControl> possibleControls;
 
@@ -283,10 +286,13 @@ namespace YARG.Menu.Dialogs
         {
             if (_state is not State.Starting and not State.Done)
             {
-                _cancellationTokenSource.Cancel();
-                _bindingTokenSource.Cancel();
+                _cancellationTokenSource?.Cancel();
+                _bindingTokenSource?.Cancel();
             }
             _state = State.Done;
+
+            _cancellationTokenSource?.Dispose();
+            _bindingTokenSource?.Dispose();
         }
 
         protected enum State
