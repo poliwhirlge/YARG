@@ -162,8 +162,7 @@ Shader "YargParticlesLit"
 
             // -------------------------------------
             // Includes
-            #include "Assets/Art/Shaders/ShaderVariablesFunctions.hlsl"
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+            #include "Assets/Art/Shaders/YargParticlesLitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitForwardPass.hlsl"
             ENDHLSL
         }
@@ -236,8 +235,7 @@ Shader "YargParticlesLit"
 
             // -------------------------------------
             // Includes
-            #include "Assets/Art/Shaders/ShaderVariablesFunctions.hlsl"
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+            #include "Assets/Art/Shaders/YargParticlesLitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitGbufferPass.hlsl"
             ENDHLSL
         }
@@ -280,8 +278,7 @@ Shader "YargParticlesLit"
 
             // -------------------------------------
             // Includes
-            #include "Assets/Art/Shaders/ShaderVariablesFunctions.hlsl"
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+            #include "Assets/Art/Shaders/YargParticlesLitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesDepthOnlyPass.hlsl"
             ENDHLSL
         }
@@ -322,8 +319,7 @@ Shader "YargParticlesLit"
 
             // -------------------------------------
             // Includes
-            #include "Assets/Art/Shaders/ShaderVariablesFunctions.hlsl"
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+            #include "Assets/Art/Shaders/YargParticlesLitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesDepthNormalsPass.hlsl"
             ENDHLSL
         }
@@ -366,8 +362,7 @@ Shader "YargParticlesLit"
 
             // -------------------------------------
             // Includes
-            #include "Assets/Art/Shaders/ShaderVariablesFunctions.hlsl"
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+            #include "Assets/Art/Shaders/YargParticlesLitInput.hlsl"
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesEditorPass.hlsl"
 
             ENDHLSL
@@ -412,8 +407,7 @@ Shader "YargParticlesLit"
 
             // -------------------------------------
             // Includes
-            #include "Assets/Art/Shaders/ShaderVariablesFunctions.hlsl"
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+            #include "Assets/Art/Shaders/YargParticlesLitInput.hlsl"
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesEditorPass.hlsl"
 
             ENDHLSL
@@ -447,8 +441,7 @@ Shader "YargParticlesLit"
 
             // -------------------------------------
             // Includes
-            #include "Assets/Art/Shaders/ShaderVariablesFunctions.hlsl"
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLitInput.hlsl"
+            #include "Assets/Art/Shaders/YargParticlesLitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Utils/Universal2D.hlsl"
             ENDHLSL
         }

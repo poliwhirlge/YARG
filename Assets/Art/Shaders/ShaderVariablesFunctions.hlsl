@@ -525,6 +525,10 @@ float GetCurrentExposureMultiplier()
 
 #include "Assets/Art/Shaders/highways.hlsl"
 
+// I reject your reality and substitute my own
+#undef GetVertexPositionInputs
+#undef GetWorldSpaceNormalizeViewDir
+
 half3 GetWorldSpaceNormalizeViewDir(float3 positionWS)
 {
     if (_YargHighwaysN > 0)

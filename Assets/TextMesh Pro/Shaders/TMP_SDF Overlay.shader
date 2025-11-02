@@ -126,6 +126,7 @@ SubShader {
 		#include "UnityUI.cginc"
 		#include "TMPro_Properties.cginc"
 		#include "TMPro.cginc"
+		#include "Assets/Art/Shaders/highways.hlsl"
 
 		struct vertex_t
 		{
@@ -178,13 +179,16 @@ SubShader {
 			vert.x += _VertexOffsetX;
 			vert.y += _VertexOffsetY;
 
-			float4 vPosition = UnityObjectToClipPos(vert);
+			float4 vPosition = YargObjectToClipPos(vert);
+
+		    float3 worldPos = mul(unity_ObjectToWorld, vert).xyz;
+		    float4x4 projMatrix = YargCamProjMatrix(worldPos);
 
 			float2 pixelSize = vPosition.w;
-			pixelSize /= float2(_ScaleX, _ScaleY) * abs(mul((float2x2)UNITY_MATRIX_P, _ScreenParams.xy));
+			pixelSize /= float2(_ScaleX, _ScaleY) * abs(mul((float2x2)projMatrix, _ScreenParams.xy));
 			float scale = rsqrt(dot(pixelSize, pixelSize));
 			scale *= abs(input.texcoord0.w) * _GradientScale * (_Sharpness + 1);
-			if (UNITY_MATRIX_P[3][3] == 0) scale = lerp(abs(scale) * (1 - _PerspectiveFilter), scale, abs(dot(UnityObjectToWorldNormal(input.normal.xyz), normalize(WorldSpaceViewDir(vert)))));
+			if (projMatrix[3][3] == 0) scale = lerp(abs(scale) * (1 - _PerspectiveFilter), scale, abs(dot(UnityObjectToWorldNormal(input.normal.xyz), normalize(WorldSpaceViewDir(vert)))));
 
 			float weight = lerp(_WeightNormal, _WeightBold, bold) / 4.0;
 			weight = (weight + _FaceDilate) * _ScaleRatioA * 0.5;
