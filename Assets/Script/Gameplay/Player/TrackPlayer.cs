@@ -157,7 +157,7 @@ namespace YARG.Gameplay.Player
 
         public override BaseEngine BaseEngine => Engine;
 
-        protected List<TNote> Notes { get; private set; }
+        protected List<TNote> Notes { get; set; }
 
         protected int NoteIndex { get; private set; }
 

@@ -59,7 +59,6 @@ namespace YARG.Gameplay.Player
         {
             var track = chart.GetDrumsTrack(Player.Profile.CurrentInstrument).Clone();
             var instrumentDifficulty = track.GetDifficulty(Player.Profile.CurrentDifficulty);
-            instrumentDifficulty.SetDrumActivationFlags(Player.Profile.StarPowerActivationType);
             return instrumentDifficulty;
         }
 
@@ -148,6 +147,10 @@ namespace YARG.Gameplay.Player
 
             // Particle 0 is always kick fret
             _kickFretFlash.Initialize(colors.GetParticleColor(0).ToUnityColor());
+
+            // Initialize drum activation notes
+            NoteTrack.SetDrumActivationFlags(Player.Profile.StarPowerActivationType);
+            Notes = NoteTrack.Notes;
 
             // Set up drum fill lead-ups
             SetDrumFillEffects();
@@ -246,6 +249,12 @@ namespace YARG.Gameplay.Player
                     _trackEffects[candidateIndex].TotalLanes = _fretArray.FretCount;
                     pairedFillIndexes.Add(candidateIndex);
                     checkpoint = candidateIndex;
+
+                    // Also make sure that the fill effect actually extends to the note
+                    if (_trackEffects[candidateIndex].TimeEnd < chord.TimeEnd)
+                    {
+                        TrackEffect.ExtendEffect(candidateIndex, chord.TimeEnd, NoteSpeed, ref _trackEffects);
+                    }
                 }
             }
 
