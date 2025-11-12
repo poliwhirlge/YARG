@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-using YARG.Core.Engine.Guitar;
-using YARG.Core.Engine.Keys;
+using YARG.Assets.Script.Gameplay.Player;
 using YARG.Gameplay.Player;
 
 namespace YARG.Gameplay.Visuals
@@ -234,6 +233,13 @@ namespace YARG.Gameplay.Visuals
             {
                 // Make sure to lerp it to prevent jumps
                 _whammyFactor = Mathf.Lerp(_whammyFactor, guitarPlayer.WhammyFactor, Time.deltaTime * 6f);
+            }
+
+            // Update whammy factor
+            if (_player is FiveLaneKeysPlayer keysPlayer)
+            {
+                // Make sure to lerp it to prevent jumps
+                _whammyFactor = Mathf.Lerp(_whammyFactor, keysPlayer.WhammyFactor, Time.deltaTime * 6f);
             }
 
             // Change line amplitude
