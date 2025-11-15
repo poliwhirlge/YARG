@@ -1,7 +1,9 @@
-﻿using Cysharp.Text;
+﻿using System.Diagnostics;
+using Cysharp.Text;
 using TMPro;
 using UnityEngine;
 using YARG.Core.Game;
+using YARG.Core.Logging;
 
 namespace YARG.Gameplay.Visuals
 {
@@ -49,7 +51,7 @@ namespace YARG.Gameplay.Visuals
         public void SetCombo(int multiplier, int displayMultiplier, int maxMultiplier, int combo)
         {
             _multiplierText.enabled = false;
-            if (multiplier > 1)
+            if (displayMultiplier > 1)
             {
                 _multiplierText = _textCache[displayMultiplier - 2];
                 _multiplierText.enabled = true;
