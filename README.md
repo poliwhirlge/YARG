@@ -122,7 +122,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="0719", MODE="0666"
       - the main repository's URL (`https://github.com/YARC-Official/YARG`) if you just want to build the game.
       - A complete example using the main repository's URL is `git clone -b dev --recursive https://github.com/YARC-Official/YARG.git`.
    6. Because YARG contains submodules, you may need to do `git submodule update` when things get updated.
-4. Install Unity 2021.3.45f2. Easiest method will be using Unity Hub:
+4. Install Unity 6000.2.10f1. Easiest method will be using Unity Hub:
    1. Download and install [Unity Hub](https://unity.com/download).
    2. Sign-in/create an account with a personal license (free).
    3. In Unity Hub, hit the arrow next to Add and select `Add project from disk`, then select the folder you cloned YARG to.
@@ -139,7 +139,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="0719", MODE="0666"
    - This should be performed automatically when Unity starts up, but it can be performend manually if needed.
 8. You're ready to go!
 
-### Linux
+### Linux (Outdated)
 
 On certain distributions of Linux, Unity 2021.3.36f1 editor is broken and the YARG project (or any other project for that matter) cannot be imported. When trying to open the project, Unity will freeze during the import process.
 
