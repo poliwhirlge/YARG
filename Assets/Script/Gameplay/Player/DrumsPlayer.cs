@@ -59,7 +59,6 @@ namespace YARG.Gameplay.Player
         {
             var track = chart.GetDrumsTrack(Player.Profile.CurrentInstrument).Clone();
             var instrumentDifficulty = track.GetDifficulty(Player.Profile.CurrentDifficulty);
-            instrumentDifficulty.SetDrumActivationFlags(Player.Profile.StarPowerActivationType);
             return instrumentDifficulty;
         }
 
@@ -104,6 +103,7 @@ namespace YARG.Gameplay.Player
             engine.OnSoloEnd += OnSoloEnd;
 
             engine.OnStarPowerPhraseHit += OnStarPowerPhraseHit;
+            engine.OnStarPowerPhraseMissed += OnStarPowerPhraseMissed;
             engine.OnStarPowerStatus += OnStarPowerStatus;
 
             engine.OnCountdownChange += OnCountdownChange;
@@ -147,6 +147,10 @@ namespace YARG.Gameplay.Player
 
             // Particle 0 is always kick fret
             _kickFretFlash.Initialize(colors.GetParticleColor(0).ToUnityColor());
+
+            // Initialize drum activation notes
+            NoteTrack.SetDrumActivationFlags(Player.Profile.StarPowerActivationType);
+            Notes = NoteTrack.Notes;
 
             // Set up drum fill lead-ups
             SetDrumFillEffects();
@@ -245,6 +249,12 @@ namespace YARG.Gameplay.Player
                     _trackEffects[candidateIndex].TotalLanes = _fretArray.FretCount;
                     pairedFillIndexes.Add(candidateIndex);
                     checkpoint = candidateIndex;
+
+                    // Also make sure that the fill effect actually extends to the note
+                    if (_trackEffects[candidateIndex].TimeEnd < chord.TimeEnd)
+                    {
+                        TrackEffect.ExtendEffect(candidateIndex, chord.TimeEnd, NoteSpeed, ref _trackEffects);
+                    }
                 }
             }
 
@@ -308,6 +318,14 @@ namespace YARG.Gameplay.Player
         {
             base.OnStarPowerPhraseHit();
 
+            foreach (var note in NotePool.AllSpawned)
+            {
+                (note as DrumsNoteElement)?.OnStarPowerUpdated();
+            }
+        }
+
+        protected override void OnStarPowerPhraseMissed()
+        {
             foreach (var note in NotePool.AllSpawned)
             {
                 (note as DrumsNoteElement)?.OnStarPowerUpdated();
@@ -433,7 +451,7 @@ namespace YARG.Gameplay.Player
         private bool ShouldSwapSnareAndHiHat()
         {
             if (
-                (Player.Profile.GameMode is GameMode.FiveLaneDrums) ||
+                (Player.Profile.CurrentInstrument is Instrument.FiveLaneDrums) ||
                 (Player.Profile.CurrentInstrument is Instrument.ProDrums && Player.Profile.SplitProTomsAndCymbals)
             )
             {
