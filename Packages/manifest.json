@@ -23,7 +23,7 @@
     }
   ],
   "dependencies": {
-    "com.coffee.softmask-for-ugui": "1.0.2",
+    "com.coffee.softmask-for-ugui": "3.5.0",
     "com.cysharp.csprojmodifier": "https://github.com/Cysharp/CsprojModifier.git?path=src/CsprojModifier/Assets/CsprojModifier",
     "com.cysharp.unitask": "2.5.3",
     "com.github-glitchenzo.nugetforunity": "4.5.0",
