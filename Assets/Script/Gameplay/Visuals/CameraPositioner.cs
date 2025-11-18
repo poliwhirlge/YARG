@@ -87,7 +87,7 @@ namespace YARG.Gameplay.Visuals
             // Initialize sequences
             InitializeSequences();
 
-            _gameManager = FindObjectOfType<GameManager>();
+            _gameManager = FindAnyObjectByType<GameManager>();
 
             // If there is no game manager, we are in preview mode and none of this should happen
             if (_gameManager == null)
