@@ -16,6 +16,7 @@ namespace YARG.Audio.BASS
 {
     public sealed class BassStemMixer : StemMixer
     {
+        #nullable enable
         private struct StemData
         {
             public SongStem     Stem;
@@ -31,6 +32,7 @@ namespace YARG.Audio.BASS
                 ReverbHandles = reverbHandles;
             }
         }
+        #nullable disable
 
         private const    float WHAMMY_SYNC_INTERVAL_SECONDS = 1f;
 
@@ -191,7 +193,7 @@ namespace YARG.Audio.BASS
                 if (!BassMix.MixerRemoveChannel(channel))
                 {
                     YargLogger.LogDebug("Failed to remove channel from mixer");
-                };
+                }
             }
             AddChannelsToMixer(_stemDatas);
 
@@ -305,7 +307,7 @@ namespace YARG.Audio.BASS
                     YargLogger.LogFormatError("Failed to load stem {0}: {1}!", stemInfo.Stem, Bass.LastError);
                     return false;
                 }
-                stemDatas.Add(new StemData(stemInfo.Stem, stemInfo.GetVolumeMatrix(), streamHandles, reverbHandles));
+                stemDatas.Add(new StemData(stemInfo.Stem, stemInfo.GetVolumeMatrix(), streamHandles!, reverbHandles!));
             }
 
             if (!AddChannelsToMixer(stemDatas))
@@ -474,6 +476,8 @@ namespace YARG.Audio.BASS
             }
         }
     }
+
+    #nullable enable
     public static class StreamInfoExtensions
     {
         public static float[,]? GetVolumeMatrix(this StemMixer.StemInfo streamInfo)
@@ -501,4 +505,5 @@ namespace YARG.Audio.BASS
             return volumeMatrix;
         }
     }
+    #nullable disable
 }

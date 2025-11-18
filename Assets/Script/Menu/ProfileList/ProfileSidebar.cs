@@ -240,7 +240,9 @@ namespace YARG.Menu.ProfileList
                 // Disable if the child's gameObject.name is not found in possibleSettings
                 var child = _sidebarContent.transform.GetChild(i);
 
+                #nullable enable
                 (string setting, string? overrideText)? settingInfo = null;
+                #nullable disable
 
                 foreach (var possibleSetting in possibleSettings)
                 {
