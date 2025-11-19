@@ -101,7 +101,7 @@ namespace YARG.Menu.ScoreScreen
             }
             else if (Player.IsReplay)
             {
-                if (Stats.MaxCombo == Stats.TotalNotes)
+                if (Stats.IsFullCombo)
                 {
                     _colorizer.SetCardColor(ScoreCardColorizer.ScoreCardColor.Gold);
                 }
@@ -112,7 +112,7 @@ namespace YARG.Menu.ScoreScreen
 
                 ShowTag("Replay");
             }
-            else if (Stats.MaxCombo == Stats.TotalNotes)
+            else if (Stats.IsFullCombo)
             {
                 _colorizer.SetCardColor(ScoreCardColorizer.ScoreCardColor.Gold);
                 ShowTag("Full Combo");
