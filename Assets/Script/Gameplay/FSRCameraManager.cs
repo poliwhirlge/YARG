@@ -437,8 +437,9 @@ namespace YARG.Gameplay
         [Obsolete]
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
+            var cameraColorRtHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
             cmd = CommandBufferPool.Get("FSR Blit");
-            Blit(cmd, _fsr._output, BuiltinRenderTextureType.CameraTarget);
+            Blit(cmd, _fsr._output, cameraColorRtHandle);
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
