@@ -325,6 +325,9 @@ namespace YARG.Gameplay
                 text.AppendFormat("- Star Power activation count: {0}\n", stats.StarPowerActivationCount);
                 text.AppendFormat("- Total Star Power bars filled: {0:0.000000}\n", stats.TotalStarPowerBarsFilled);
                 text.AppendFormat("- Total time in Star Power: {0:0.000000}\n", stats.TimeInStarPower);
+                text.AppendLine();
+                text.AppendLine("Player Judgement stats:");
+                text.AppendFormat("- Average Offset: {0:0.00} ms", stats.GetAverageOffset() * 1000);
 
                 GUILayout.Label(text.AsSpan().TrimEnd('\n').ToString());
             }
