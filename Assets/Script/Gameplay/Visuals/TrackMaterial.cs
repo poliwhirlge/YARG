@@ -120,8 +120,6 @@ namespace YARG.Gameplay.Visuals
         private Texture2D _baseTexture;
         private Texture2D _sidePattern;
 
-        private string HIGHWAY_TEXTURE_FOLDER = Path.Combine(CustomContentManager.CustomizationDirectory, "highwayPresets");
-
         private const string BASE_TEXTURE_NAME = "baseTexture.png";
         private const string SIDE_PATTERN_NAME = "sidePattern.png";
 
@@ -201,8 +199,9 @@ namespace YARG.Gameplay.Visuals
         // TODO: Integrate this with CustomContentManager so it can be managed in settings
         private void SetTextures()
         {
-            var baseTexturePath = Path.Combine(HIGHWAY_TEXTURE_FOLDER, BASE_TEXTURE_NAME);
-            var sidePatternPath = Path.Combine(HIGHWAY_TEXTURE_FOLDER, SIDE_PATTERN_NAME);
+            var highwayTextureFolder = Path.Combine(CustomContentManager.CustomizationDirectory, "highwayPresets");
+            var baseTexturePath = Path.Combine(highwayTextureFolder, BASE_TEXTURE_NAME);
+            var sidePatternPath = Path.Combine(highwayTextureFolder, SIDE_PATTERN_NAME);
 
             if (!File.Exists(baseTexturePath) || !File.Exists(sidePatternPath))
             {
