@@ -26,7 +26,14 @@ namespace YARG.Gameplay.Visuals
         private static readonly int _starPowerColorProperty = Shader.PropertyToID("_Starpower_Color");
 
         private static readonly int _baseTextureProperty = Shader.PropertyToID("_Layer_2_Texture");
+        private static readonly int _baseParallaxProperty = Shader.PropertyToID("_Layer_2_Parallax");
         private static readonly int _sidePatternProperty = Shader.PropertyToID("_Layer_4_Texture");
+        private static readonly int _sideParallaxProperty = Shader.PropertyToID("_Layer_4_Parallax");
+
+        private Texture _originalBaseTexture;
+        private Texture _originalSidePattern;
+        private float _originalBaseParallax;
+        private float _originalSideParallax;
 
         public struct Preset
         {
@@ -209,6 +216,15 @@ namespace YARG.Gameplay.Visuals
                 return;
             }
 
+            // If the originals haven't been saved yet, save them now
+            if (_originalBaseTexture == null)
+            {
+                _originalBaseTexture = _material.GetTexture(_baseTextureProperty);
+                _originalBaseParallax = _material.GetFloat(_baseParallaxProperty);
+                _originalSidePattern = _material.GetTexture(_sidePatternProperty);
+                _originalSideParallax = _material.GetFloat(_sideParallaxProperty);
+            }
+
             var bytes = File.ReadAllBytes(baseTexturePath);
             _baseTexture = new Texture2D(2, 2);
             var success = _baseTexture.LoadImage(bytes);
@@ -220,11 +236,17 @@ namespace YARG.Gameplay.Visuals
             // If either didn't load, use defaults
             if (!success)
             {
+                _material.SetTexture(_baseTextureProperty, _originalBaseTexture);
+                _material.SetFloat(_baseParallaxProperty, _originalBaseParallax);
+                _material.SetTexture(_sidePatternProperty, _originalSidePattern);
+                _material.SetFloat(_sideParallaxProperty, _originalSideParallax);
                 return;
             }
 
             _material.SetTexture(_baseTextureProperty, _baseTexture);
+            _material.SetFloat(_baseParallaxProperty, 1f);
             _material.SetTexture(_sidePatternProperty, _sidePattern);
+            _material.SetFloat(_sideParallaxProperty, 1f);
         }
     }
 }
