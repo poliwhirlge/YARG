@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using YARG.Core.Game;
 using YARG.Helpers.Extensions;
 using YARG.Settings;
+using YARG.Settings.Customization;
 
 namespace YARG.Gameplay.Visuals
 {
@@ -22,6 +24,9 @@ namespace YARG.Gameplay.Visuals
         private static readonly int _layer4ColorProperty = Shader.PropertyToID("_Layer_4_Color");
 
         private static readonly int _starPowerColorProperty = Shader.PropertyToID("_Starpower_Color");
+
+        private static readonly int _baseTextureProperty = Shader.PropertyToID("_Layer_2_Texture");
+        private static readonly int _sidePatternProperty = Shader.PropertyToID("_Layer_4_Texture");
 
         public struct Preset
         {
@@ -112,6 +117,14 @@ namespace YARG.Gameplay.Visuals
         private Material _material;
         private readonly List<Material> _trimMaterials = new();
 
+        private Texture2D _baseTexture;
+        private Texture2D _sidePattern;
+
+        private string HIGHWAY_TEXTURE_FOLDER = Path.Combine(CustomContentManager.CustomizationDirectory, "highwayPresets");
+
+        private const string BASE_TEXTURE_NAME = "baseTexture.png";
+        private const string SIDE_PATTERN_NAME = "sidePattern.png";
+
         private void Awake()
         {
             // Get materials
@@ -136,6 +149,8 @@ namespace YARG.Gameplay.Visuals
                 Layer3 = FromHex("FFFFFF", 0f),
                 Layer4 = FromHex("2C499E", 1f)
             };
+
+            SetTextures();
         }
 
         public void Initialize(HighwayPreset highwayPreset)
@@ -181,6 +196,36 @@ namespace YARG.Gameplay.Visuals
         {
             float position = (float) time * noteSpeed / 4f;
             _material.SetFloat(_scrollProperty, position);
+        }
+
+        // TODO: Integrate this with CustomContentManager so it can be managed in settings
+        private void SetTextures()
+        {
+            var baseTexturePath = Path.Combine(HIGHWAY_TEXTURE_FOLDER, BASE_TEXTURE_NAME);
+            var sidePatternPath = Path.Combine(HIGHWAY_TEXTURE_FOLDER, SIDE_PATTERN_NAME);
+
+            if (!File.Exists(baseTexturePath) || !File.Exists(sidePatternPath))
+            {
+                // Use default textures
+                return;
+            }
+
+            var bytes = File.ReadAllBytes(baseTexturePath);
+            _baseTexture = new Texture2D(2, 2);
+            var success = _baseTexture.LoadImage(bytes);
+
+            bytes = File.ReadAllBytes(sidePatternPath);
+            _sidePattern = new Texture2D(2, 2);
+            success = success && _sidePattern.LoadImage(bytes);
+
+            // If either didn't load, use defaults
+            if (!success)
+            {
+                return;
+            }
+
+            _material.SetTexture(_baseTextureProperty, _baseTexture);
+            _material.SetTexture(_sidePatternProperty, _sidePattern);
         }
     }
 }
