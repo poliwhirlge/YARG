@@ -1861,6 +1861,12 @@
                 },
                 "SideImage": {
                     "Name": "Custom Side Texture (Highlighted in SP)"
+                },
+                "BaseWaviness": {
+                    "Name": "Base Texture Waviness"
+                },
+                "SideWaviness": {
+                    "Name": "Side Texture Waviness"
                 }
             },
 			"RockMeterPreset" : {

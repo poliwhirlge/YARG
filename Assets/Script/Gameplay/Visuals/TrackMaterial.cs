@@ -27,13 +27,17 @@ namespace YARG.Gameplay.Visuals
 
         private static readonly int _baseTextureProperty = Shader.PropertyToID("_Layer_2_Texture");
         private static readonly int _baseParallaxProperty = Shader.PropertyToID("_Layer_2_Parallax");
+        private static readonly int _baseWavinessProperty = Shader.PropertyToID("_Layer_2_Wavy_Amount");
         private static readonly int _sidePatternProperty = Shader.PropertyToID("_Layer_4_Texture");
         private static readonly int _sideParallaxProperty = Shader.PropertyToID("_Layer_4_Parallax");
+        private static readonly int _sideWavinessProperty = Shader.PropertyToID("_Layer_4_Wavy_Amount");
 
         private Texture _originalBaseTexture;
         private Texture _originalSidePattern;
-        private float _originalBaseParallax;
-        private float _originalSideParallax;
+        private float   _originalBaseParallax;
+        private float   _originalSideParallax;
+        private float   _originalBaseWaviness;
+        private float   _originalSideWaviness;
 
         public struct Preset
         {
@@ -43,6 +47,8 @@ namespace YARG.Gameplay.Visuals
             public Color    Layer4;
             public FileInfo BaseTexture;
             public FileInfo SidePattern;
+            public float    BaseWaviness;
+            public float    SideWaviness;
 
             public static Preset FromHighwayPreset(HighwayPreset preset, bool groove)
             {
@@ -55,7 +61,9 @@ namespace YARG.Gameplay.Visuals
                         Layer3 = preset.BackgroundGrooveBaseColor3.ToUnityColor(),
                         Layer4 = preset.BackgroundGroovePatternColor.ToUnityColor(),
                         BaseTexture = preset.BackgroundImage,
-                        SidePattern = preset.SideImage
+                        SidePattern = preset.SideImage,
+                        BaseWaviness = preset.BaseWaviness,
+                        SideWaviness = preset.SideWaviness
                     };
                 }
 
@@ -66,7 +74,9 @@ namespace YARG.Gameplay.Visuals
                     Layer3 = preset.BackgroundBaseColor3.ToUnityColor(),
                     Layer4 = preset.BackgroundPatternColor.ToUnityColor(),
                     BaseTexture = preset.BackgroundImage,
-                    SidePattern = preset.SideImage
+                    SidePattern = preset.SideImage,
+                    BaseWaviness = preset.BaseWaviness,
+                    SideWaviness = preset.SideWaviness
                 };
             }
         }
@@ -166,8 +176,10 @@ namespace YARG.Gameplay.Visuals
             {
                 _originalBaseTexture = _material.GetTexture(_baseTextureProperty);
                 _originalBaseParallax = _material.GetFloat(_baseParallaxProperty);
+                _originalBaseWaviness = _material.GetFloat(_baseWavinessProperty);
                 _originalSidePattern = _material.GetTexture(_sidePatternProperty);
                 _originalSideParallax = _material.GetFloat(_sideParallaxProperty);
+                _originalSideWaviness = _material.GetFloat(_sideWavinessProperty);
             }
         }
 
@@ -176,6 +188,10 @@ namespace YARG.Gameplay.Visuals
             _material.SetColor(_starPowerColorProperty, highwayPreset.StarPowerColor.ToUnityColor() );
             _normalPreset = Preset.FromHighwayPreset(highwayPreset, false);
             _groovePreset = Preset.FromHighwayPreset(highwayPreset, true);
+
+            // Waviness applies whether or not custom textures are used
+            _material.SetFloat(_baseWavinessProperty, _normalPreset.BaseWaviness);
+            _material.SetFloat(_sideWavinessProperty, _normalPreset.SideWaviness);
 
             SetTextures();
         }
