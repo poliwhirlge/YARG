@@ -37,10 +37,12 @@ namespace YARG.Gameplay.Visuals
 
         public struct Preset
         {
-            public Color Layer1;
-            public Color Layer2;
-            public Color Layer3;
-            public Color Layer4;
+            public Color    Layer1;
+            public Color    Layer2;
+            public Color    Layer3;
+            public Color    Layer4;
+            public FileInfo BaseTexture;
+            public FileInfo SidePattern;
 
             public static Preset FromHighwayPreset(HighwayPreset preset, bool groove)
             {
@@ -51,7 +53,9 @@ namespace YARG.Gameplay.Visuals
                         Layer1 = preset.BackgroundGrooveBaseColor1.ToUnityColor(),
                         Layer2 = preset.BackgroundGrooveBaseColor2.ToUnityColor(),
                         Layer3 = preset.BackgroundGrooveBaseColor3.ToUnityColor(),
-                        Layer4 = preset.BackgroundGroovePatternColor.ToUnityColor()
+                        Layer4 = preset.BackgroundGroovePatternColor.ToUnityColor(),
+                        BaseTexture = preset.BackgroundImage,
+                        SidePattern = preset.SideImage
                     };
                 }
 
@@ -60,7 +64,9 @@ namespace YARG.Gameplay.Visuals
                     Layer1 = preset.BackgroundBaseColor1.ToUnityColor(),
                     Layer2 = preset.BackgroundBaseColor2.ToUnityColor(),
                     Layer3 = preset.BackgroundBaseColor3.ToUnityColor(),
-                    Layer4 = preset.BackgroundPatternColor.ToUnityColor()
+                    Layer4 = preset.BackgroundPatternColor.ToUnityColor(),
+                    BaseTexture = preset.BackgroundImage,
+                    SidePattern = preset.SideImage
                 };
             }
         }
@@ -155,7 +161,14 @@ namespace YARG.Gameplay.Visuals
                 Layer4 = FromHex("2C499E", 1f)
             };
 
-            SetTextures();
+            // If the original textures haven't been saved yet, save them now
+            if (_originalBaseTexture == null)
+            {
+                _originalBaseTexture = _material.GetTexture(_baseTextureProperty);
+                _originalBaseParallax = _material.GetFloat(_baseParallaxProperty);
+                _originalSidePattern = _material.GetTexture(_sidePatternProperty);
+                _originalSideParallax = _material.GetFloat(_sideParallaxProperty);
+            }
         }
 
         public void Initialize(HighwayPreset highwayPreset)
@@ -163,6 +176,8 @@ namespace YARG.Gameplay.Visuals
             _material.SetColor(_starPowerColorProperty, highwayPreset.StarPowerColor.ToUnityColor() );
             _normalPreset = Preset.FromHighwayPreset(highwayPreset, false);
             _groovePreset = Preset.FromHighwayPreset(highwayPreset, true);
+
+            SetTextures();
         }
 
         private void Update()
@@ -206,23 +221,20 @@ namespace YARG.Gameplay.Visuals
         // TODO: Integrate this with CustomContentManager so it can be managed in settings
         private void SetTextures()
         {
-            var highwayTextureFolder = Path.Combine(CustomContentManager.CustomizationDirectory, "highwayPresets");
-            var baseTexturePath = Path.Combine(highwayTextureFolder, BASE_TEXTURE_NAME);
-            var sidePatternPath = Path.Combine(highwayTextureFolder, SIDE_PATTERN_NAME);
+            if (_normalPreset.BaseTexture == null || _normalPreset.SidePattern == null)
+            {
+                SetDefaultTextures();
+                return;
+            }
+
+            var baseTexturePath = _normalPreset.BaseTexture.FullName;
+            var sidePatternPath = _normalPreset.SidePattern.FullName;
 
             if (!File.Exists(baseTexturePath) || !File.Exists(sidePatternPath))
             {
                 // Use default textures
+                SetDefaultTextures();
                 return;
-            }
-
-            // If the originals haven't been saved yet, save them now
-            if (_originalBaseTexture == null)
-            {
-                _originalBaseTexture = _material.GetTexture(_baseTextureProperty);
-                _originalBaseParallax = _material.GetFloat(_baseParallaxProperty);
-                _originalSidePattern = _material.GetTexture(_sidePatternProperty);
-                _originalSideParallax = _material.GetFloat(_sideParallaxProperty);
             }
 
             var bytes = File.ReadAllBytes(baseTexturePath);
@@ -236,10 +248,7 @@ namespace YARG.Gameplay.Visuals
             // If either didn't load, use defaults
             if (!success)
             {
-                _material.SetTexture(_baseTextureProperty, _originalBaseTexture);
-                _material.SetFloat(_baseParallaxProperty, _originalBaseParallax);
-                _material.SetTexture(_sidePatternProperty, _originalSidePattern);
-                _material.SetFloat(_sideParallaxProperty, _originalSideParallax);
+                SetDefaultTextures();
                 return;
             }
 
@@ -247,6 +256,14 @@ namespace YARG.Gameplay.Visuals
             _material.SetFloat(_baseParallaxProperty, 1f);
             _material.SetTexture(_sidePatternProperty, _sidePattern);
             _material.SetFloat(_sideParallaxProperty, 1f);
+        }
+
+        private void SetDefaultTextures()
+        {
+            _material.SetTexture(_baseTextureProperty, _originalBaseTexture);
+            _material.SetFloat(_baseParallaxProperty, _originalBaseParallax);
+            _material.SetTexture(_sidePatternProperty, _originalSidePattern);
+            _material.SetFloat(_sideParallaxProperty, _originalSideParallax);
         }
     }
 }
