@@ -169,7 +169,8 @@
                 "DocContributor": "Doc Contributor",
                 "Moderator": "Moderator",
                 "QATester": "QA Tester",
-                "SFXArtist": "SFX Artist"
+                "SFXArtist": "SFX Artist",
+                "Translator": "Translator"
             },
             "Header": {
                 "Contributors": "Contributors",
