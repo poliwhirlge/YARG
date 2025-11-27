@@ -25,6 +25,9 @@ namespace YARG.Gameplay.Visuals
         //For all lanes, cap the lane height to a percentage of the screen height, 1.0f = 100% of screen height
         private const float MAX_LANE_SCREEN_HEIGHT_PERCENT = 0.55f;
 
+        //In single player, allow more height
+        private const float MAX_LANE_HEIGHT_SP = 0.72f;
+
         //This controls padding between lanes for multiple lanes by shrinking each lane from its full width
         //1.0f = no padding (full width), 0.9f means 90% of full width
         private const float MULTI_LANE_SCALE_FACTOR = 0.90f;
@@ -37,6 +40,7 @@ namespace YARG.Gameplay.Visuals
         private readonly List<float>   _raisedRotations  = new();
 
         private Camera                     _renderCamera;
+        private GameManager                _gameManager;
 
         public  RenderTexture              HighwaysOutputTexture { get; private set; }
         public event Action<RenderTexture> OnHighwaysTextureCreated;
@@ -64,6 +68,7 @@ namespace YARG.Gameplay.Visuals
 
         private void OnEnable()
         {
+            _gameManager = FindAnyObjectByType<GameManager>();
             _renderCamera = GetComponent<Camera>();
             _fadeCalcPass ??= new FadePass(this);
 
@@ -204,7 +209,7 @@ namespace YARG.Gameplay.Visuals
                 float trackHeight = trackSize.y;
 
                 float targetScreenWidth = _cameras.Count == 1
-                    // Special case for single player
+                    // Special case for single non-vocals highway
                     ? Math.Min(Screen.width, trackWidth)
                     // For multiple lanes, cap to a percentage of screen width and the scale factor to ensure padding
                     : Math.Min(Screen.width * MAX_LANE_SCREEN_WIDTH_PERCENT, (float)Screen.width / _cameras.Count * MULTI_LANE_SCALE_FACTOR);
@@ -212,7 +217,12 @@ namespace YARG.Gameplay.Visuals
                 float scaleFactorWidth = targetScreenWidth / trackWidth;
 
                 // Also calculate scale factor needed to fit within 50% of screen height
-                float targetScreenHeight = Screen.height * MAX_LANE_SCREEN_HEIGHT_PERCENT;
+                // This single player special case is different because here we care if vocals are present
+                float targetScreenHeight = _gameManager?.TotalPlayers < 2
+                    ? Screen.height * MAX_LANE_HEIGHT_SP
+                    // Track height can be taller if there is only one player
+                    : Screen.height * MAX_LANE_SCREEN_HEIGHT_PERCENT;
+
                 float scaleFactorHeight = targetScreenHeight / trackHeight;
 
                 // Use the more restrictive scale factor
