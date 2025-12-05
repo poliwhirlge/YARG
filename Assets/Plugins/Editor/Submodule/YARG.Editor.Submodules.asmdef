@@ -2,7 +2,9 @@
     "name": "YARG.Editor.Submodules",
     "rootNamespace": "",
     "references": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
     "overrideReferences": true,
