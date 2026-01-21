@@ -207,6 +207,7 @@ namespace YARG.Venue.VenueCamera
             // Make up a PostProcessingEvent of type default to start us off
             var firstEffect = new PostProcessingEvent(PostProcessingType.Default, -2f, 0);
             CurrentEffect = firstEffect;
+            PreviousEffect = firstEffect;
 
             if (_cameraCuts.Count > 0)
             {
