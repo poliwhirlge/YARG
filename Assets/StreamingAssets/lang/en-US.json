@@ -174,13 +174,14 @@
             },
             "Header": {
                 "Contributors": "Contributors",
-                "GameStartedBy": "A Game Started By",
+                "Founder": "Founder",
                 "LeadArtist": "Lead Artist",
                 "Maintainers": "Maintainers",
-                "ProjectManager": "Project Manager",
+                "ProjectManager": "Project Managers",
                 "SpecialThanks": "Special Thanks",
                 "SetlistManager": "Setlist Manager",
-                "Songs": "Songs"
+                "Songs": "Songs",
+                "Supporters": "Supporters"
             },
             "Song": {
                 "Name": "\"{0}\" by {1}",
@@ -198,6 +199,9 @@
                 "Mixed": "Mixed",
                 "Mastered": "Mastered",
                 "By": "By: {0}"
+            },
+            "Text": {
+                "ExtraSpecialThanks": "An extra special thanks goes to <b>EliteAsian</b>, <b>Kadu</b>, <b>RileyTheFox</b>, <b>TheNathannator</b>, and <b>Sonicfind</b><br><br>We stand on the shoulders of giants."
             }
         },
         "Toast": {
