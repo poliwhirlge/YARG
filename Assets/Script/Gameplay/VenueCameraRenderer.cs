@@ -326,6 +326,7 @@ namespace YARG.Gameplay
             var mirrorEffect = stack.GetComponent<MirrorComponent>();
             if (mirrorEffect.IsActive() && _mirrorMaterial != null)
             {
+                _mirrorMaterial.shaderKeywords = Array.Empty<string>();
                 _mirrorMaterial.EnableKeyword(_mirrorKeywords[mirrorEffect.wipeIndex.value]);
                 _mirrorMaterial.SetFloat(_wipeTimeId, mirrorEffect.wipeTime.value);
                 _mirrorMaterial.SetFloat(_startTimeId, mirrorEffect.startTime.value);
