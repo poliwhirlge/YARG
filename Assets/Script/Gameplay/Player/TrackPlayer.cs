@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
+using YARG.Assets.Script.Helpers;
 using YARG.Core;
 using YARG.Core.Audio;
 using YARG.Core.Chart;
@@ -10,6 +10,7 @@ using YARG.Core.Engine;
 using YARG.Core.Logging;
 using YARG.Gameplay.HUD;
 using YARG.Gameplay.Visuals;
+using YARG.Playback;
 using YARG.Player;
 using YARG.Settings;
 using YARG.Themes;
@@ -22,7 +23,9 @@ namespace YARG.Gameplay.Player
         public const float DEFAULT_ZERO_FADE_POS = 3f;
         public const float NOTE_SPAWN_OFFSET     = 5f;
 
-        public const float TRACK_WIDTH = 2f;
+        public const float TRACK_WIDTH  = 2f;
+
+        public static int HighwayCount = 1;
 
         public double SpawnTimeOffset => (ZeroFadePosition + _spawnAheadDelay + -STRIKE_LINE_POS) / NoteSpeed;
 
@@ -34,6 +37,8 @@ namespace YARG.Gameplay.Player
 
         [SerializeField]
         protected CameraPositioner CameraPositioner;
+        [SerializeField]
+        protected HighwayCameraRendering HighwayCameraRendering;
         [SerializeField]
         protected TrackMaterial TrackMaterial;
         [SerializeField]
@@ -55,14 +60,15 @@ namespace YARG.Gameplay.Player
         protected KeyedPool NotePool;
         [SerializeField]
         protected Pool BeatlinePool;
-        [FormerlySerializedAs("SoloPool")]
         [SerializeField]
         protected Pool EffectPool;
 
         public float ZeroFadePosition { get; private set; }
         public float FadeSize         { get; private set; }
 
-        public Vector2 HUDViewportPosition => TrackCamera.WorldToViewportPoint(_hudLocation.position);
+        [field: Header("Star Power Trim Effect")]
+        [SerializeField]
+        protected StarPowerEffectElement StarPowerEffect;
 
         protected List<Beatline> Beatlines;
 
@@ -71,6 +77,8 @@ namespace YARG.Gameplay.Player
         protected bool IsBass { get; private set; }
 
         private float _spawnAheadDelay;
+
+        protected float SongLength;
 
         public virtual void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView,
             StemMixer mixer, int? lastHighScore)
@@ -103,6 +111,10 @@ namespace YARG.Gameplay.Player
             // Move the HUD location based on the highway length
             var change = ZeroFadePosition - DEFAULT_ZERO_FADE_POS;
             _hudLocation.position = _hudLocation.position.AddZ(change);
+
+            // Must be done after the HUD location is set
+            StarPowerEffect.Initialize();
+            StarPowerEffect.gameObject.SetActive(false);
 
             // Determine if a track is bass or not for the BASS GROOVE text notification
             IsBass = Player.Profile.CurrentInstrument
@@ -138,7 +150,7 @@ namespace YARG.Gameplay.Player
 
         public override BaseEngine BaseEngine => Engine;
 
-        protected List<TNote> Notes { get; private set; }
+        protected List<TNote> Notes { get; set; }
 
         protected int NoteIndex { get; private set; }
 
@@ -155,9 +167,12 @@ namespace YARG.Gameplay.Player
 
         private double _previousStarPowerAmount;
 
+        private bool _wasStarPowerActive;
+        private bool _didLowerTrack;
+
         private Queue<TrackEffect> _upcomingEffects = new();
         private List<TrackEffectElement> _currentEffects = new();
-        private List<TrackEffect> _trackEffects = new();
+        protected List<TrackEffect> _trackEffects = new();
 
         protected SongChart Chart;
 
@@ -169,9 +184,23 @@ namespace YARG.Gameplay.Player
                 return;
             }
 
+            // Get player count
+            if (index == 0)
+            {
+                // Reset
+                HighwayCount = 1;
+            }
+            else if (index + 1 > HighwayCount)
+            {
+                HighwayCount = index + 1;
+            }
+
+            // Consolidate tracks into a parent object for animation purposes
+            transform.SetParent(GameObject.Find("Visuals").transform);
+
             base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
 
-            SetupTheme(player.Profile.GameMode);
+            SetupTheme();
 
             Chart = chart;
 
@@ -204,15 +233,32 @@ namespace YARG.Gameplay.Player
                 Engine.SetSpeed(GameManager.SongSpeed);
             }
 
+            GameManager.BeatEventHandler.Visual.Subscribe(SunburstEffects.PulseSunburst, BeatEventType.StrongBeat);
             InitializeTrackEffects();
 
             ResetNoteCounters();
 
             FinishInitialization();
+
+            SongLength = (float) chart.GetEndTime();
+        }
+
+        protected override void FinishDestruction()
+        {
+            GameManager.BeatEventHandler.Visual.Unsubscribe(SunburstEffects.PulseSunburst);
+
+            base.FinishDestruction();
         }
 
         private void InitializeTrackEffects()
         {
+
+            // If the user doesn't want track effects, generate no effects
+            if (!SettingsManager.Settings.EnableTrackEffects.Value)
+            {
+                return;
+            }
+
             var phrases = new List<Phrase>();
 
             foreach (var phrase in NoteTrack.Phrases)
@@ -245,21 +291,24 @@ namespace YARG.Gameplay.Player
 
             var effects = TrackEffect.PhrasesToEffects(phrases);
             _trackEffects.AddRange(effects);
+        }
+
+        private void FinalizeTrackEffects()
+        {
             foreach (var effect in TrackEffect.SliceEffects(NoteSpeed, _trackEffects))
             {
                 _upcomingEffects.Enqueue(effect);
             }
-
-            if (EngineContainer.UnisonPhrases.Any())
-            {
-                GameManager.EngineManager.OnUnisonPhraseSuccess += OnUnisonPhraseSuccess;
-            }
         }
 
-        private void SetupTheme(GameMode gameMode)
+        private void SetupTheme()
         {
+            var (gameMode, instrument) = (Player.Profile.GameMode, Player.Profile.CurrentInstrument);
+
+            var style = VisualStyleHelpers.GetVisualStyle(gameMode, instrument);
+
             var themePrefab = ThemeManager.Instance.CreateNotePrefabFromTheme(
-                Player.ThemePreset, gameMode, NotePool.Prefab);
+                Player.ThemePreset, style, NotePool.Prefab);
             NotePool.SetPrefabAndReset(themePrefab);
         }
 
@@ -268,8 +317,9 @@ namespace YARG.Gameplay.Player
 
         protected virtual void FinishInitialization()
         {
-            TrackMaterial.Initialize(ZeroFadePosition, FadeSize, Player.HighwayPreset);
+            TrackMaterial.Initialize(Player.HighwayPreset);
             CameraPositioner.Initialize(Player.CameraPreset);
+            FinalizeTrackEffects();
         }
 
         protected void ResetNoteCounters()
@@ -296,6 +346,9 @@ namespace YARG.Gameplay.Player
 
         protected override void UpdateVisuals(double visualTime)
         {
+            // Allow the HUD to track the highway with animations
+            TrackView.UpdateHUDPosition(HighwayIndex, HighwayCount);
+
             UpdateNotes(visualTime);
             UpdateBeatlines(visualTime);
             UpdateTrackEffects(visualTime);
@@ -318,8 +371,15 @@ namespace YARG.Gameplay.Player
             TrackMaterial.GrooveMode = groove;
             TrackMaterial.StarpowerMode = stats.IsStarPowerActive;
 
-            ComboMeter.SetCombo(stats.ScoreMultiplier, maxMultiplier, stats.Combo);
+            // In multiplayer, don't double the score multiplier in the strikeline element
+            // Otherwise, it looks like the band multiplier applies on top of the score multiplier
+            int displayMultiplier = GameManager.TotalPlayers > 1 && stats.IsStarPowerActive
+                ? stats.ScoreMultiplier / 2
+                : stats.ScoreMultiplier;
+
+            ComboMeter.SetCombo(stats.ScoreMultiplier, displayMultiplier, maxMultiplier, stats.Combo);
             StarpowerBar.SetStarpower(currentStarPowerAmount, stats.IsStarPowerActive);
+            StarpowerBar.UpdateFlash(GameManager.BeatEventHandler.Visual.StrongBeat.CurrentPercentage);
             SunburstEffects.SetSunburstEffects(groove, stats.IsStarPowerActive, _currentMultiplier);
 
             TrackView.UpdateNoteStreak(stats.Combo);
@@ -351,11 +411,25 @@ namespace YARG.Gameplay.Player
                 TrackView.ShowStarPowerReady();
             }
 
+            if (stats.IsStarPowerActive && !_wasStarPowerActive && !_didLowerTrack)
+            {
+                CameraPositioner.Scoop();
+            }
+
             _previousStarPowerAmount = currentStarPowerAmount;
+            _wasStarPowerActive = stats.IsStarPowerActive;
 
             foreach (var haptics in SantrollerHaptics)
             {
                 haptics.SetStarPowerFill((float) currentStarPowerAmount);
+            }
+
+            bool isSongEnd = visualTime > SongLength;
+            bool shouldLowerTrack = isSongEnd || GameManager.PlayerHasFailed;
+            if (!_didLowerTrack && shouldLowerTrack)
+            {
+                _didLowerTrack = true;
+                CameraPositioner.Lower(isSongEnd);
             }
         }
 
@@ -700,6 +774,7 @@ namespace YARG.Gameplay.Player
                 if (LastCombo >= 10)
                 {
                     GlobalAudioHandler.PlaySoundEffect(SfxSample.NoteMiss);
+                    CameraPositioner.Punch();
                 }
 
                 foreach (var haptics in SantrollerHaptics)
@@ -717,6 +792,11 @@ namespace YARG.Gameplay.Player
             {
                 ComboMeter.SetFullCombo(false);
                 IsFc = false;
+            }
+
+            if (LastCombo >= 10)
+            {
+                CameraPositioner.Punch();
             }
 
             LastCombo = Combo;
@@ -742,20 +822,24 @@ namespace YARG.Gameplay.Player
             }
         }
 
-        protected virtual void OnUnisonPhraseSuccess()
-        {
-            // This is here because it seemed like awarding from TrackPlayer would work best for replays
-            // since all the replay data is saved here
-            YargLogger.LogFormatTrace("TrackPlayer would have awarded unison bonus at engine time {0}", Engine.CurrentTime);
-        }
-
         protected virtual void OnCountdownChange(double countdownLength, double endTime)
         {
             TrackView.UpdateCountdown(countdownLength, endTime);
         }
 
+        protected virtual void OnStarPowerPhraseMissed(TNote note)
+        {
+            OnStarPowerPhraseMissed();
+        }
+
         protected virtual void OnStarPowerPhraseHit(TNote note)
         {
+            if (SettingsManager.Settings.EnableTrackEffects.Value)
+            {
+                StarPowerEffect.gameObject.SetActive(true);
+                StarPowerEffect.PlayAnimation();
+            }
+
             OnStarPowerPhraseHit();
         }
 
