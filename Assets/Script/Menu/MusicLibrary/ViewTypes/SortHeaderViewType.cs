@@ -43,10 +43,10 @@ namespace YARG.Menu.MusicLibrary
                 SubgenreCounter.Add(song.Subgenre);
             }
 
-            SourceCountText = $"{SourceCounter.Count} sources";
-            CharterCountText = $"{CharterCounter.Count} charters";
-            GenreCountText = $"{GenreCounter.Count} genres";
-            SubgenreCountText = $"{SubgenreCounter.Count} subgenres";
+            SourceCountText = $"{SourceCounter.Count} Source{(SourceCounter.Count == 1 ? "" : "s")}";
+            CharterCountText = $"{CharterCounter.Count} Charter{(CharterCounter.Count == 1 ? "" : "s")}";
+            GenreCountText = $"{GenreCounter.Count} Genre{(GenreCounter.Count == 1 ? "" : "s")}";
+            SubgenreCountText = $"{SubgenreCounter.Count} Subgenre{(SubgenreCounter.Count == 1 ? "" : "s")}";
             SourceCounter.Clear();
             CharterCounter.Clear();
             GenreCounter.Clear();

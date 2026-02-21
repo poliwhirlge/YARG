@@ -42,38 +42,10 @@ namespace YARG.Menu.MusicLibrary
                 }
             }
 
-            SourceCountText = $"{SourceCounter.Count} sources";
-            CharterCountText = $"{CharterCounter.Count} charters";
-            GenreCountText = $"{GenreCounter.Count} genres";
-            SubgenreCountText = $"{SubgenreCounter.Count} subgenres";
-            SourceCounter.Clear();
-            CharterCounter.Clear();
-            GenreCounter.Clear();
-            SubgenreCounter.Clear();
-        }
-
-        public CategoryViewType(string primary, int songCount, SongCategory[] songsUnderCategory)
-        {
-            Primary = primary;
-            SongCount = songCount;
-
-            foreach (var category in songsUnderCategory)
-            {
-                foreach (var song in category.Songs)
-                {
-                    SourceCounter.Add(song.Source);
-                    CharterCounter.Add(song.Charter);
-                    GenreCounter.Add(song.Genre);
-                    if (!string.IsNullOrEmpty(song.Subgenre)) {
-                        SubgenreCounter.Add(song.Subgenre);
-                    }
-                }
-            }
-
-            SourceCountText = $"{SourceCounter.Count} sources";
-            CharterCountText = $"{CharterCounter.Count} charters";
-            GenreCountText = $"{GenreCounter.Count} genres";
-            SubgenreCountText = $"{SubgenreCounter.Count} subgenres";
+            SourceCountText = $"{SourceCounter.Count} Source{(SourceCounter.Count == 1 ? "" : "s")}";
+            CharterCountText = $"{CharterCounter.Count} Charter{(CharterCounter.Count == 1 ? "" : "s")}";
+            GenreCountText = $"{GenreCounter.Count} Genre{(GenreCounter.Count == 1 ? "" : "s")}";
+            SubgenreCountText = $"{SubgenreCounter.Count} Subgenre{(SubgenreCounter.Count == 1 ? "" : "s")}";
             SourceCounter.Clear();
             CharterCounter.Clear();
             GenreCounter.Clear();
