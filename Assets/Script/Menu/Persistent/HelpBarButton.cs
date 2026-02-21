@@ -32,6 +32,7 @@ namespace YARG.Menu.Persistent
 
         private NavigationScheme.Entry? _entry;
 
+        private bool  _isSpecialButton;
         private Color _buttonBackgroundColor;
         private Color _buttonImageColor;
         private Color _buttonBackgroundColorOnDown;
@@ -81,9 +82,9 @@ namespace YARG.Menu.Persistent
             _buttonLabel.text = entry.DisplayName;
 
             // Show/hide text and transitions
-            var special = entry.Action is MenuAction.Select or MenuAction.Start or MenuAction.Left or MenuAction.Right;
-            _buttonText.gameObject.SetActive(!special);
-            _button.transition = special
+            _isSpecialButton = entry.Action is MenuAction.Select or MenuAction.Start or MenuAction.Left or MenuAction.Right;
+            _buttonText.gameObject.SetActive(!_isSpecialButton);
+            _button.transition = _isSpecialButton
                 ? Selectable.Transition.None
                 : Selectable.Transition.SpriteSwap;
 
@@ -221,7 +222,7 @@ namespace YARG.Menu.Persistent
 
             _currentState = state;
 
-            _button.transition = Selectable.Transition.SpriteSwap;
+            _button.transition = _isSpecialButton ? Selectable.Transition.None : Selectable.Transition.SpriteSwap;
             switch (state)
             {
                 case ButtonState.NONE:
