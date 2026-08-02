@@ -55,7 +55,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 80
+  m_PreferredHeight: 74
   m_FlexibleWidth: -1
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
@@ -187,7 +187,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3207017708716527494, guid: 04c42ce9e0b2dce49923fc28c2289ff4, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -20
+      value: -14
       objectReference: {fileID: 0}
     - target: {fileID: 3207017708716527494, guid: 04c42ce9e0b2dce49923fc28c2289ff4, type: 3}
       propertyPath: m_LocalPosition.x
