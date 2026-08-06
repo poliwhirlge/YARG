@@ -376,8 +376,8 @@
             "AddedToSet": "Added To Setlist",
             "PlaylistAddedToSet": "Added {0:N0} Songs From Playlist To Setlist",
             "StartSet": "Start The Set",
-            "PlayShow": "Play A Show",
-            "HoldPlayShow": "(Hold) Play A Show",
+            "MoreInfo": "More Info",
+            "HoldPlayShow": "<align=left><size=80%>More Info<br>(Hold) Play A Show</size></align>",
             "Filters": "Filters",
             "NoSongsInPlaylist": "No Songs In Playlist",
             "CannotAddToSelf": "No, I will not create an ouroboros for you. Nice try, Jaden.",
@@ -1335,7 +1335,7 @@
                 "Dropdown": {
                     "Family_Friendly": "Family Friendly",
                     "Supervision_Recommended": "Supervision Recommended",
-                    "Mature": "Mature",
+                    "Mature": "Mature Content",
                     "Sensitive_Content": "Sensitive Content",
                     "None": "None"
                 }

@@ -140,9 +140,11 @@ namespace YARG.Menu.MusicLibrary
         private GameObject _noPlayerWarning;
         [SerializeField]
         private PopupMenu _popupMenu;
+        [SerializeField]
+        private MoreInfoMenu _moreInfoMenu;
 
         protected override int ExtraListViewPadding => 15;
-        protected override bool CanScroll => !_popupMenu.gameObject.activeSelf;
+        protected override bool CanScroll => !_popupMenu.gameObject.activeSelf && !_moreInfoMenu.gameObject.activeSelf;
 
         public bool ShouldDisplaySoloHighScores { get; private set; }
 
@@ -340,15 +342,24 @@ namespace YARG.Menu.MusicLibrary
                 ? new NavigationScheme.Entry(MenuAction.Right, "Menu.MusicLibrary.MoveInPlaylist", MovePlaylistEntryDown)
                 : new NavigationScheme.Entry(MenuAction.Right, "Menu.MusicLibrary.SkipSection", GoToNextSection);
 
-            // Give yellow the same behaviour as green: press to add to set, hold to start the set
             NavigationScheme.Entry yellowEntry;
+            Action openMoreInfoMenu = () =>
+            {
+                if (_currentSong == null)
+                {
+                    return;
+                }
+
+                GlobalVariables.State.CurrentSong = _currentSong;
+                _moreInfoMenu.gameObject.SetActive(true);
+            };
 
             if (SettingsManager.Settings.EnablePlayAShow.Value)
             {
                 yellowEntry = new NavigationScheme.Entry(
                         MenuAction.Yellow,
                         "Menu.MusicLibrary.HoldPlayShow",
-                        () => { }, // tap does nothing
+                        openMoreInfoMenu,
                         holdSeconds: GREEN_HOLD_SECONDS,
                         onHoldHandler: EnterShowMode
                     );
@@ -357,10 +368,8 @@ namespace YARG.Menu.MusicLibrary
             {
                 yellowEntry = new NavigationScheme.Entry(
                         MenuAction.Yellow,
-                        "Menu.MusicLibrary.AddHoldStartSet",
-                        _ => AddToPlaylist(),
-                        holdSeconds: GREEN_HOLD_SECONDS,
-                        onHoldHandler: OnGreenHold // Use existing function
+                        "Menu.MusicLibrary.MoreInfo",
+                        openMoreInfoMenu
                     );
             }
 
