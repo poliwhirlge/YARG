@@ -54,6 +54,8 @@ namespace YARG.Menu.MusicLibrary
         private Image _contentRatingIcon;
         [SerializeField]
         private Image _sourceIcon;
+
+        [Space]
         [SerializeField]
         private Image _bandBarImage;
         [SerializeField]
@@ -72,6 +74,10 @@ namespace YARG.Menu.MusicLibrary
         private GameObject _loadingPhraseBar;
         [SerializeField]
         private TextMeshProUGUI _loadingPhraseText;
+
+        [Space]
+        [SerializeField]
+        private Sprite[] _allContentRatingIcons;
 
 
         private          SongEntry               _currentSong;
@@ -112,6 +118,17 @@ namespace YARG.Menu.MusicLibrary
                 SongRating.No_Rating               => "No Rating",
                 SongRating.Sensitive_Content       => "Sensitive Content",
                 _                                  => "No Rating",
+            };
+
+            _contentRatingIcon.sprite = _currentSong.SongRating switch
+            {
+                SongRating.Unspecified             => _allContentRatingIcons[0],
+                SongRating.Family_Friendly         => _allContentRatingIcons[1],
+                SongRating.Supervision_Recommended => _allContentRatingIcons[2],
+                SongRating.Mature                  => _allContentRatingIcons[3],
+                SongRating.No_Rating               => _allContentRatingIcons[0],
+                SongRating.Sensitive_Content       => _allContentRatingIcons[4],
+                _                                  => _allContentRatingIcons[0],
             };
 
             if (!string.IsNullOrEmpty(_currentSong.LoadingPhrase))
@@ -181,8 +198,76 @@ namespace YARG.Menu.MusicLibrary
                 _bandBarImage.color = _bandDifficultyBlue;
             }
 
+            UpdateIntensityIcons();
+
             _cancellationToken = new();
             LoadAlbumCover(_currentSong, _cancellationToken.Token).Forget();
+        }
+
+        private void UpdateIntensityIcons()
+        {
+            /*
+                Guitar               ; Bass               ; 4 lane      ; Keys     ; Vocals  ; Rhythm
+                Pro Guitar           ; Pro Bass           ; 5 lane      ; Pro Keys ; Harmony ; Co-op
+                                     ;                    ; Elite drums ;          ;         ; 6F
+            */
+
+            // Row 1
+            _difficultyRings[0].SetInfo("guitar", Instrument.FiveFretGuitar, _currentSong[Instrument.FiveFretGuitar]);
+            _difficultyRings[1].SetInfo("bass", Instrument.FiveFretBass, _currentSong[Instrument.FiveFretBass]);
+
+            if (_currentSong.HasInstrument(Instrument.ProDrums))
+            {
+                _difficultyRings[2].SetInfo("realDrums", Instrument.ProDrums, _currentSong[Instrument.ProDrums]);
+            }
+            else
+            {
+                _difficultyRings[2].SetInfo("drums", Instrument.FourLaneDrums, _currentSong[Instrument.FourLaneDrums]);
+            }
+
+            _difficultyRings[3].SetInfo("keys", Instrument.Keys, _currentSong[Instrument.Keys]);
+
+            _difficultyRings[4].SetInfo("vocals", Instrument.Vocals, _currentSong[Instrument.Vocals]);
+            _difficultyRings[5].SetInfo("rhythm", Instrument.FiveFretRhythm, _currentSong[Instrument.FiveFretRhythm]);
+
+            // Row 2
+            var values = _currentSong[Instrument.ProGuitar_17Fret];
+            var instrument = Instrument.ProGuitar_17Fret;
+            if (values.Intensity == -1 && _currentSong.HasInstrument(Instrument.ProGuitar_22Fret))
+            {
+                values = _currentSong[Instrument.ProGuitar_22Fret];
+                instrument = Instrument.ProGuitar_22Fret;
+            }
+            _difficultyRings[6].SetInfo("realGuitar", instrument, values);
+
+            values = _currentSong[Instrument.ProBass_17Fret];
+            instrument = Instrument.ProBass_17Fret;
+            if (values.Intensity == -1 && _currentSong.HasInstrument(Instrument.ProBass_22Fret))
+            {
+                values = _currentSong[Instrument.ProBass_22Fret];
+                instrument = Instrument.ProBass_22Fret;
+            }
+            _difficultyRings[7].SetInfo("realBass", instrument, values);
+
+            _difficultyRings[8].SetInfo("ghDrums", Instrument.FiveLaneDrums, _currentSong[Instrument.FiveLaneDrums]);
+            _difficultyRings[9].SetInfo("realKeys", Instrument.ProKeys, _currentSong[Instrument.ProKeys]);
+
+            var partIcon = _currentSong.VocalsCount switch
+            {
+                >= 3 => "harmVocals",
+                2    => "twoVocals",
+                _    => "vocals",
+            };
+            _difficultyRings[10].SetInfo(partIcon, Instrument.Vocals, _currentSong[Instrument.Vocals]);
+            _difficultyRings[11].SetInfo("guitarCoop", Instrument.FiveFretCoopGuitar, _currentSong[Instrument.FiveFretCoopGuitar]);
+
+            // Row 3
+            _difficultyRings[12].gameObject.SetActive(false);
+            _difficultyRings[13].gameObject.SetActive(false);
+            _difficultyRings[14].SetInfo("eliteDrums", Instrument.EliteDrums, _currentSong[Instrument.EliteDrums]);
+            _difficultyRings[15].gameObject.SetActive(false);
+            _difficultyRings[16].gameObject.SetActive(false);
+            _difficultyRings[17].gameObject.SetActive(false); // need 6F icon
         }
 
         // Album loading code stolen from Sidebar.cs
@@ -190,7 +275,7 @@ namespace YARG.Menu.MusicLibrary
         {
             Texture2D texture = null;
 
-            // We explicity don't use the cancellation token here as we need control to resume
+            // We explicitly don't use the cancellation token here as we need control to resume
             // in *this method* to ensure that image gets disposed since it is backed by a FixedArray
             // ReSharper disable once MethodSupportsCancellation
             using var image = await UniTask.RunOnThreadPool(songEntry.LoadAlbumData);

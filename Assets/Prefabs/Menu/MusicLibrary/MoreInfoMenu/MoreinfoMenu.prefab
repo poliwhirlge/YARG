@@ -5004,8 +5004,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4288318336
-  m_fontColor: {r: 0.5019608, g: 0.54509807, b: 0.6039216, a: 1}
+    rgba: 4291539116
+  m_fontColor: {r: 0.6745098, g: 0.6901961, b: 0.79607844, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8300,6 +8300,12 @@ MonoBehaviour:
   _charterText: {fileID: 7068402143275492471}
   _loadingPhraseBar: {fileID: 3140718997633967935}
   _loadingPhraseText: {fileID: 6002036777888724259}
+  _allContentRatingIcons:
+  - {fileID: -22552776, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
+  - {fileID: 1383214845, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
+  - {fileID: 1975822979, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
+  - {fileID: -1194512660, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
+  - {fileID: 22296138, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
 --- !u!223 &997589972612845782
 Canvas:
   m_ObjectHideFlags: 0
@@ -9006,8 +9012,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4288318336
-  m_fontColor: {r: 0.5019608, g: 0.54509807, b: 0.6039216, a: 1}
+    rgba: 4291539116
+  m_fontColor: {r: 0.6745098, g: 0.6901961, b: 0.79607844, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
