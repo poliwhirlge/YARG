@@ -97,6 +97,7 @@ namespace YARG.Menu.MusicLibrary
                 redEntry
             }, false));
             _backButton.SetInfoFromSchemeEntry(redEntry);
+            _backButton.SetDefaultButtonState(HelpBarButton.ButtonState.HOVER);
 
             _currentSong = GlobalVariables.State.CurrentSong;
             UpdateSongInfo();
