@@ -267,7 +267,7 @@ namespace YARG.Menu.MusicLibrary
             _difficultyRings[14].SetInfo("eliteDrums", Instrument.EliteDrums, _currentSong[Instrument.EliteDrums]);
             _difficultyRings[15].gameObject.SetActive(false);
             _difficultyRings[16].gameObject.SetActive(false);
-            _difficultyRings[17].gameObject.SetActive(false); // need 6F icon
+            _difficultyRings[17].SetInfo("guitar6f", Instrument.SixFretGuitar, _currentSong[Instrument.SixFretGuitar]);
         }
 
         // Album loading code stolen from Sidebar.cs
