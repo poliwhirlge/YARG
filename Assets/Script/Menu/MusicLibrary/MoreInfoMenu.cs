@@ -13,6 +13,7 @@ using YARG.Core.Utility;
 using YARG.Helpers.Extensions;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
+using YARG.Scores;
 using YARG.Song;
 using static System.Globalization.CultureInfo;
 
@@ -200,6 +201,9 @@ namespace YARG.Menu.MusicLibrary
             }
 
             UpdateIntensityIcons();
+
+            _fcCountText.text = $"{ScoreContainer.GetFcCountForSong(_currentSong.Hash)}";
+            _playCountText.text = $"{ScoreContainer.GetPlayCountForSong(_currentSong.Hash)}";
 
             _cancellationToken = new();
             LoadAlbumCover(_currentSong, _cancellationToken.Token).Forget();

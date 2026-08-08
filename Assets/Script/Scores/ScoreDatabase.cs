@@ -152,6 +152,13 @@ namespace YARG.Scores
             return _db.Query<T>(query, args);
         }
 
+        private T ExecuteScalar<T>(string query, params object[] args)
+            where T : new()
+        {
+            YargLogger.LogFormatTrace("Query text:\n{0}", query);
+            return _db.ExecuteScalar<T>(query, args);
+        }
+
         private IEnumerable<T> DeferredQuery<T>(string query, params object[] args)
             where T : new()
         {
@@ -720,6 +727,25 @@ namespace YARG.Scores
             parameters.AddRange(BuildInstrumentParams(instruments));
 
             return FindWithQuery<PlayerScoreRecord>(query, parameters.ToArray());
+        }
+
+        public int GetFcCountForSong(HashWrapper songChecksum)
+        {
+            return ExecuteScalar<int>(@"
+                SELECT COUNT(isFc)
+                FROM PlayerScores
+                WHERE GameRecordId IN (SELECT Id FROM GameRecords WHERE SongChecksum = ?)
+                  AND isFc = 1",
+                songChecksum.HashBytes);
+        }
+
+        public int GetPlayCountForSong(HashWrapper songChecksum)
+        {
+            return ExecuteScalar<int>(@"
+                SELECT COUNT(Id)
+                FROM GameRecords
+                WHERE SongChecksum = ?",
+                songChecksum.HashBytes);
         }
 
         #endregion

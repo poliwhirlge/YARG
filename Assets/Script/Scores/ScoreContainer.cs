@@ -682,7 +682,33 @@ namespace YARG.Scores
             {
                 YargLogger.LogException(e, $"Failed to load high score from database for player with ID {playerId}.");
                 return null;
+            }
         }
+
+        public static int GetFcCountForSong(HashWrapper songChecksum)
+        {
+            try
+            {
+                return _db.GetFcCountForSong(songChecksum);
+            }
+            catch (Exception e)
+            {
+                YargLogger.LogException(e, $"Failed to load FC count for song with checksum {songChecksum}.");
+                return 0;
+            }
+        }
+
+        public static int GetPlayCountForSong(HashWrapper songChecksum)
+        {
+            try
+            {
+                return _db.GetPlayCountForSong(songChecksum);
+            }
+            catch (Exception e)
+            {
+                YargLogger.LogException(e, $"Failed to load play count for song with checksum {songChecksum}.");
+                return 0;
+            }
         }
     }
 }
