@@ -6694,9 +6694,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
   m_Padding:
     m_Left: 0
-    m_Right: 0
+    m_Right: 25
     m_Top: 0
-    m_Bottom: 10
+    m_Bottom: 25
   m_ChildAlignment: 1
   m_Spacing: 10
   m_ChildForceExpandWidth: 1
@@ -11832,10 +11832,6 @@ PrefabInstance:
     - target: {fileID: 7726438009903044018, guid: a11897a8154066446a2d40af1639902a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8698820094085693264, guid: a11897a8154066446a2d40af1639902a, type: 3}
-      propertyPath: m_PreferredHeight
-      value: 57
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
