@@ -972,6 +972,8 @@ MonoBehaviour:
   _scoreText: {fileID: 6552542928508312759}
   _percentText: {fileID: 1555618512822692446}
   _starView: {fileID: 9057200571246404763}
+  _fcHighlight: {fileID: 301451892394111893}
+  _brutalFcHighlight: {fileID: 4067013608302096413}
 --- !u!1 &5010333998941071845
 GameObject:
   m_ObjectHideFlags: 0

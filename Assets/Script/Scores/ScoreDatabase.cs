@@ -748,6 +748,25 @@ namespace YARG.Scores
                 songChecksum.HashBytes);
         }
 
+        public List<PlayerScoreRecord> GetHighScoresForSong(HashWrapper songChecksum)
+        {
+            string query = @"
+            select * from playerscores where id in
+            (
+	            select id from
+	            (
+		            select playerscores.id, max(score) as score, songchecksum, instrument, difficulty
+		            from playerscores
+		            inner join gamerecords
+		            on playerscores.GameRecordId = gamerecords.Id
+		            where SongChecksum = ?
+		            group by SongChecksum, Instrument, Difficulty
+	            )
+            )";
+
+            return Query<PlayerScoreRecord>(query, songChecksum.HashBytes);
+        }
+
         #endregion
     }
 

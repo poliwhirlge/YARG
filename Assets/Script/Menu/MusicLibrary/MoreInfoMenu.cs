@@ -78,6 +78,10 @@ namespace YARG.Menu.MusicLibrary
 
         [Space]
         [SerializeField]
+        private MoreInfoMenuScoreDisplay[] _scoreDisplays;
+
+        [Space]
+        [SerializeField]
         private Sprite[] _allContentRatingIcons;
 
 
@@ -207,6 +211,8 @@ namespace YARG.Menu.MusicLibrary
 
             _cancellationToken = new();
             LoadAlbumCover(_currentSong, _cancellationToken.Token).Forget();
+
+            UpdateHighScores();
         }
 
         private void UpdateIntensityIcons()
@@ -273,6 +279,26 @@ namespace YARG.Menu.MusicLibrary
             _difficultyRings[15].gameObject.SetActive(false);
             _difficultyRings[16].gameObject.SetActive(false);
             _difficultyRings[17].SetInfo("guitar6f", Instrument.SixFretGuitar, _currentSong[Instrument.SixFretGuitar]);
+        }
+
+        private void UpdateHighScores()
+        {
+            for (int i = 0; i < _scoreDisplays.Length; i++)
+            {
+                _scoreDisplays[i].ClearValues();
+            }
+
+            var highScores = ScoreContainer.GetHighScoresForSong(_currentSong.Hash);
+
+            for (int i = 0; i < highScores.Count; i++)
+            {
+                var score = highScores[i];
+                if (score.Instrument == Instrument.FiveFretBass)
+                {
+                    int difficulty = (int) score.Difficulty;
+                    _scoreDisplays[difficulty].ShowScore(score);
+                }
+            }
         }
 
         // Album loading code stolen from Sidebar.cs

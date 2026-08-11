@@ -710,5 +710,18 @@ namespace YARG.Scores
                 return 0;
             }
         }
+
+        public static List<PlayerScoreRecord> GetHighScoresForSong(HashWrapper songChecksum)
+        {
+            try
+            {
+                return _db.GetHighScoresForSong(songChecksum);
+            }
+            catch (Exception e)
+            {
+                YargLogger.LogException(e, $"Failed to get high scores for song with checksum {songChecksum}.");
+                return null;
+            }
+        }
     }
 }
