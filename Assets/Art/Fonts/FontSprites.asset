@@ -190,6 +190,11 @@ MonoBehaviour:
     m_GlyphIndex: 21
     m_Scale: 1
     m_Name: twoVocals
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 22
+    m_Scale: 1
+    m_Name: keys6l
   m_GlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -543,5 +548,21 @@ MonoBehaviour:
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
     sprite: {fileID: -2070950562, guid: 66fae0a679753ea4a9110a183b8d2af9, type: 3}
+  - m_Index: 22
+    m_Metrics:
+      m_Width: 341.25
+      m_Height: 341.33334
+      m_HorizontalBearingX: -170.625
+      m_HorizontalBearingY: 170.66667
+      m_HorizontalAdvance: 341.25
+    m_GlyphRect:
+      m_X: 682
+      m_Y: 0
+      m_Width: 341
+      m_Height: 341
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+    sprite: {fileID: -935092549, guid: 66fae0a679753ea4a9110a183b8d2af9, type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []

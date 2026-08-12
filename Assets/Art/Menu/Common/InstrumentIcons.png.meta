@@ -593,6 +593,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: keys6l
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9c89a14d5dc9f54f9381d1d7135c535
+      internalID: -935092549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -614,6 +636,7 @@ TextureImporter:
       FontSprites_13: 1438842026
       FontSprites_14: 454111736
       FontSprites_15: 224382224
+      InstrumentIcons_1: 1540133636
       InstrumentIcons_6: 818645456
       InstrumentIcons_7: -1338306158
       band: -2104244439
@@ -630,6 +653,7 @@ TextureImporter:
       guitarCoop6f: 684205679
       harmVocals: -871424490
       keys: 1353769368
+      keys6l: -935092549
       realBass: -947667561
       realDrums: 183447324
       realGuitar: 1095511443
