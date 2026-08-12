@@ -218,9 +218,9 @@ namespace YARG.Menu.MusicLibrary
         private void UpdateIntensityIcons()
         {
             /*
-                Guitar               ; Bass               ; 4 lane      ; Keys     ; Vocals  ; Rhythm
-                Pro Guitar           ; Pro Bass           ; 5 lane      ; Pro Keys ; Harmony ; Co-op
-                                     ;                    ; Elite drums ;          ;         ; 6F
+                Guitar               ; Bass               ; 4 lane      ; Keys     ; Vocals  ; Rhythm     ; Co-op(Melody)
+                Pro Guitar           ; Pro Bass           ; Elite Drums ; Pro Keys ; Harmony ; Pro Rhythm ; Pro Co-op
+                6F Guitar            ; 6F Bass            ; 5 lane      ; 6L Keys  ;         ; 6F Rhythm  ; 6F Co-op
             */
 
             // Row 1
@@ -237,9 +237,9 @@ namespace YARG.Menu.MusicLibrary
             }
 
             _difficultyRings[3].SetInfo("keys", Instrument.Keys, _currentSong[Instrument.Keys]);
-
             _difficultyRings[4].SetInfo("vocals", Instrument.Vocals, _currentSong[Instrument.Vocals]);
             _difficultyRings[5].SetInfo("rhythm", Instrument.FiveFretRhythm, _currentSong[Instrument.FiveFretRhythm]);
+            _difficultyRings[6].SetInfo("guitarCoop", Instrument.FiveFretCoopGuitar, _currentSong[Instrument.FiveFretCoopGuitar]);
 
             // Row 2
             var values = _currentSong[Instrument.ProGuitar_17Fret];
@@ -249,7 +249,7 @@ namespace YARG.Menu.MusicLibrary
                 values = _currentSong[Instrument.ProGuitar_22Fret];
                 instrument = Instrument.ProGuitar_22Fret;
             }
-            _difficultyRings[6].SetInfo("realGuitar", instrument, values);
+            _difficultyRings[7].SetInfo("realGuitar", instrument, values);
 
             values = _currentSong[Instrument.ProBass_17Fret];
             instrument = Instrument.ProBass_17Fret;
@@ -258,27 +258,28 @@ namespace YARG.Menu.MusicLibrary
                 values = _currentSong[Instrument.ProBass_22Fret];
                 instrument = Instrument.ProBass_22Fret;
             }
-            _difficultyRings[7].SetInfo("realBass", instrument, values);
-
-            _difficultyRings[8].SetInfo("ghDrums", Instrument.FiveLaneDrums, _currentSong[Instrument.FiveLaneDrums]);
-            _difficultyRings[9].SetInfo("realKeys", Instrument.ProKeys, _currentSong[Instrument.ProKeys]);
+            _difficultyRings[8].SetInfo("realBass", instrument, values);
+            _difficultyRings[9].SetInfo("eliteDrums", Instrument.EliteDrums, _currentSong[Instrument.EliteDrums]);
+            _difficultyRings[10].SetInfo("realKeys", Instrument.ProKeys, _currentSong[Instrument.ProKeys]);
 
             var partIcon = _currentSong.VocalsCount switch
             {
                 >= 3 => "harmVocals",
                 2    => "twoVocals",
-                _    => "vocals",
+                _    => "harmVocals",
             };
-            _difficultyRings[10].SetInfo(partIcon, Instrument.Vocals, _currentSong[Instrument.Vocals]);
-            _difficultyRings[11].SetInfo("guitarCoop", Instrument.FiveFretCoopGuitar, _currentSong[Instrument.FiveFretCoopGuitar]);
-
-            // Row 3
+            _difficultyRings[11].SetInfo(partIcon, Instrument.Harmony, _currentSong[Instrument.Harmony]);
             _difficultyRings[12].gameObject.SetActive(false);
             _difficultyRings[13].gameObject.SetActive(false);
-            _difficultyRings[14].SetInfo("eliteDrums", Instrument.EliteDrums, _currentSong[Instrument.EliteDrums]);
-            _difficultyRings[15].gameObject.SetActive(false);
-            _difficultyRings[16].gameObject.SetActive(false);
-            _difficultyRings[17].SetInfo("guitar6f", Instrument.SixFretGuitar, _currentSong[Instrument.SixFretGuitar]);
+
+            // Row 3
+            _difficultyRings[14].SetInfo("guitar6f", Instrument.SixFretGuitar, _currentSong[Instrument.SixFretGuitar]);
+            _difficultyRings[15].SetInfo("bass6f", Instrument.SixFretBass, _currentSong[Instrument.SixFretBass]);
+            _difficultyRings[16].SetInfo("ghDrums", Instrument.FiveLaneDrums, _currentSong[Instrument.FiveLaneDrums]);
+            _difficultyRings[17].gameObject.SetActive(false);
+            _difficultyRings[18].gameObject.SetActive(false);
+            _difficultyRings[19].SetInfo("rhythm6f", Instrument.SixFretRhythm, _currentSong[Instrument.SixFretRhythm]);
+            _difficultyRings[20].SetInfo("guitarCoop6f", Instrument.SixFretCoopGuitar, _currentSong[Instrument.SixFretCoopGuitar]);
         }
 
         private void UpdateHighScores()
