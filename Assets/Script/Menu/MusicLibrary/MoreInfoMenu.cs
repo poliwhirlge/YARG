@@ -91,8 +91,9 @@ namespace YARG.Menu.MusicLibrary
         private readonly Color                   _bandDifficultyGray = new Color(20 / 255f, 20 / 255f, 20 / 255f, 1f);
         private readonly Color                   _bandDifficultyRed  = new Color(251 / 255f, 68 / 255f, 63 / 255f, 1);
         private readonly Color                   _bandDifficultyBlue = new Color(46 / 255f, 217 / 255f, 255 / 255f, 1);
+        private readonly Difficulty[]            _difficulties = { Difficulty.Beginner, Difficulty.Easy, Difficulty.Medium, Difficulty.Hard, Difficulty.Expert, Difficulty.ExpertPlus };
 
-        private void OnEnable()
+    private void OnEnable()
         {
             var redEntry = new NavigationScheme.Entry(MenuAction.Red, "Back", () => gameObject.SetActive(false));
             Navigator.Instance.PushScheme(new NavigationScheme(new()
@@ -286,9 +287,12 @@ namespace YARG.Menu.MusicLibrary
 
         private void UpdateHighScores()
         {
+            var currentInstrument = Instrument.FiveFretBass;
+
             for (int i = 0; i < _scoreDisplays.Length; i++)
             {
-                _scoreDisplays[i].ClearValues();
+                var hasDifficulty = _currentSong.HasDifficultyForInstrument(currentInstrument, _difficulties[i]);
+                _scoreDisplays[i].ClearValues(hideDifficultyIcon: !hasDifficulty);
             }
 
             var highScores = ScoreContainer.GetHighScoresForSong(_currentSong.Hash);

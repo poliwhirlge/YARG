@@ -40,7 +40,7 @@ namespace YARG.Menu.MusicLibrary
         [SerializeField]
         private GameObject _brutalFcHighlight;
 
-        public void ClearValues()
+        public void ClearValues(bool hideDifficultyIcon = false)
         {
             _playerName.text = String.Empty;
             _scoreText.text = String.Empty;
@@ -48,10 +48,12 @@ namespace YARG.Menu.MusicLibrary
             _starView.gameObject.SetActive(false);
             _fcHighlight.SetActive(false);
             _brutalFcHighlight.SetActive(false);
+            _difficultyIcon.gameObject.SetActive(!hideDifficultyIcon);
         }
 
         public void ShowScore(PlayerScoreRecord scoreRecord)
         {
+            _difficultyIcon.gameObject.SetActive(true);
             using var scoreStringBuilder = ZString.CreateStringBuilder();
             var scoreColor = scoreRecord.IsFc ? "#ffd029" : "#ffffff";
             scoreStringBuilder.AppendFormat("<mspace=.5em><color={1}>{0:N0}</color></mspace>",
