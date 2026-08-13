@@ -14,6 +14,7 @@ using YARG.Helpers.Extensions;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
 using YARG.Scores;
+using YARG.Settings;
 using YARG.Song;
 using static System.Globalization.CultureInfo;
 
@@ -115,7 +116,9 @@ namespace YARG.Menu.MusicLibrary
             _genreText.text = _currentSong.Genre;
             _charterText.text = _currentSong.Charter;
             _sourceText.text = SongSources.SourceToGameName(_currentSong.Source);
-            _contentRatingText.text = _currentSong.SongRating switch
+
+            var songRating = _currentSong.GetSongRating(SettingsManager.Settings.CensorMatureContent.Value);
+            _contentRatingText.text = songRating switch
             {
                 SongRating.Unspecified             => "No Rating",
                 SongRating.Family_Friendly         => "Family Friendly",
@@ -126,7 +129,7 @@ namespace YARG.Menu.MusicLibrary
                 _                                  => "No Rating",
             };
 
-            _contentRatingIcon.sprite = _currentSong.SongRating switch
+            _contentRatingIcon.sprite = songRating switch
             {
                 SongRating.Unspecified             => _allContentRatingIcons[0],
                 SongRating.Family_Friendly         => _allContentRatingIcons[1],
@@ -265,8 +268,7 @@ namespace YARG.Menu.MusicLibrary
             var partIcon = _currentSong.VocalsCount switch
             {
                 >= 3 => "harmVocals",
-                2    => "twoVocals",
-                _    => "harmVocals",
+                _    => "twoVocals",
             };
             _difficultyRings[11].SetInfo(partIcon, Instrument.Harmony, _currentSong[Instrument.Harmony]);
             _difficultyRings[12].gameObject.SetActive(false);
