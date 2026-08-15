@@ -94,6 +94,11 @@ namespace YARG.Menu.Persistent
             ApplyState(_defaultState);
         }
 
+        public void SetButtonLabel(string labelText)
+        {
+            _buttonLabel.text = labelText;
+        }
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             _isPointerOver = true;

@@ -11,6 +11,7 @@ using YARG.Core.Input;
 using YARG.Core.Song;
 using YARG.Core.Utility;
 using YARG.Helpers.Extensions;
+using YARG.Localization;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
 using YARG.Scores;
@@ -79,6 +80,10 @@ namespace YARG.Menu.MusicLibrary
 
         [Space]
         [SerializeField]
+        private HelpBarButton _toggleSoloBandScoresButton;
+        [SerializeField]
+        private HelpBarButton _toggleInstrumentScoresButton;
+        [SerializeField]
         private MoreInfoMenuScoreDisplay[] _scoreDisplays;
 
         [Space]
@@ -88,23 +93,33 @@ namespace YARG.Menu.MusicLibrary
 
         private          SongEntry               _currentSong;
         private          CancellationTokenSource _cancellationToken;
-        private readonly Color                   _bandDifficultyGray = new Color(20 / 255f, 20 / 255f, 20 / 255f, 1f);
-        private readonly Color                   _bandDifficultyRed  = new Color(251 / 255f, 68 / 255f, 63 / 255f, 1);
-        private readonly Color                   _bandDifficultyBlue = new Color(46 / 255f, 217 / 255f, 255 / 255f, 1);
-        private readonly Difficulty[]            _difficulties = { Difficulty.Beginner, Difficulty.Easy, Difficulty.Medium, Difficulty.Hard, Difficulty.Expert, Difficulty.ExpertPlus };
+        private readonly Color                   _bandDifficultyGray      = new Color(20 / 255f, 20 / 255f, 20 / 255f, 1f);
+        private readonly Color                   _bandDifficultyRed       = new Color(251 / 255f, 68 / 255f, 63 / 255f, 1);
+        private readonly Color                   _bandDifficultyBlue      = new Color(46 / 255f, 217 / 255f, 255 / 255f, 1);
+        private readonly Difficulty[]            _difficulties            = { Difficulty.Beginner, Difficulty.Easy, Difficulty.Medium, Difficulty.Hard, Difficulty.Expert, Difficulty.ExpertPlus };
+        private          Instrument[]            _allInstruments          = (Instrument[])Enum.GetValues(typeof(Instrument));
+        private          List<Instrument>        _availableInstruments    = new();
+        private          int                     _selectedInstrumentIndex = 0;
+        private          Instrument              _selectedInstrument      = Instrument.FiveFretGuitar;
 
-    private void OnEnable()
+        private void OnEnable()
         {
             var redEntry = new NavigationScheme.Entry(MenuAction.Red, "Back", () => gameObject.SetActive(false));
+            var yellowEntry = new NavigationScheme.Entry(MenuAction.Yellow, "Back", () => gameObject.SetActive(false));
+            var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Blue", CycleInstrument);
             Navigator.Instance.PushScheme(new NavigationScheme(new()
             {
                 // NavigationScheme.Entry.NavigateUp,
                 // NavigationScheme.Entry.NavigateDown,
                 // NavigationScheme.Entry.NavigateSelect,
-                redEntry
+                redEntry,
+                yellowEntry,
+                blueEntry
             }, false));
             _backButton.SetInfoFromSchemeEntry(redEntry);
             _backButton.SetDefaultButtonState(HelpBarButton.ButtonState.HOVER);
+            _toggleSoloBandScoresButton.SetInfoFromSchemeEntry(yellowEntry);
+            _toggleInstrumentScoresButton.SetInfoFromSchemeEntry(blueEntry);
 
             _currentSong = GlobalVariables.State.CurrentSong;
             UpdateSongInfo();
@@ -216,6 +231,8 @@ namespace YARG.Menu.MusicLibrary
             _cancellationToken = new();
             LoadAlbumCover(_currentSong, _cancellationToken.Token).Forget();
 
+            UpdateAvailableInstruments();
+            UpdateInstrumentSelection();
             UpdateHighScores();
         }
 
@@ -285,13 +302,59 @@ namespace YARG.Menu.MusicLibrary
             _difficultyRings[20].SetInfo("guitarCoop6f", Instrument.SixFretCoopGuitar, _currentSong[Instrument.SixFretCoopGuitar]);
         }
 
+        private void UpdateAvailableInstruments()
+        {
+            _availableInstruments.Clear();
+
+            for (int i = 0; i < _allInstruments.Length; i++)
+            {
+                Instrument instrument = _allInstruments[i];
+
+                if (_currentSong[instrument].IsActive())
+                {
+                    _availableInstruments.Add(instrument);
+                }
+            }
+        }
+
+        private void UpdateInstrumentSelection()
+        {
+            _selectedInstrumentIndex = 0;
+
+            for (int i = 0; i < _availableInstruments.Count; i++)
+            {
+                Instrument instrument = _availableInstruments[i];
+
+                if (_selectedInstrument == instrument)
+                {
+                    _selectedInstrumentIndex = i;
+                }
+            }
+
+            _selectedInstrument = _availableInstruments[_selectedInstrumentIndex];
+
+            _toggleInstrumentScoresButton.SetButtonLabel(Localize.ToLocalizedName(_selectedInstrument));
+        }
+
+        private void CycleInstrument()
+        {
+            _selectedInstrumentIndex += 1;
+
+            if (_selectedInstrumentIndex >= _availableInstruments.Count)
+            {
+                _selectedInstrumentIndex = 0;
+            }
+
+            _selectedInstrument = _availableInstruments[_selectedInstrumentIndex];
+            _toggleInstrumentScoresButton.SetButtonLabel(Localize.ToLocalizedName(_selectedInstrument));
+            UpdateHighScores();
+        }
+
         private void UpdateHighScores()
         {
-            var currentInstrument = Instrument.FiveFretBass;
-
             for (int i = 0; i < _scoreDisplays.Length; i++)
             {
-                var hasDifficulty = _currentSong.HasDifficultyForInstrument(currentInstrument, _difficulties[i]);
+                var hasDifficulty = _currentSong.HasDifficultyForInstrument(_selectedInstrument, _difficulties[i]);
                 _scoreDisplays[i].ClearValues(hideDifficultyIcon: !hasDifficulty);
             }
 
@@ -300,7 +363,7 @@ namespace YARG.Menu.MusicLibrary
             for (int i = 0; i < highScores.Count; i++)
             {
                 var score = highScores[i];
-                if (score.Instrument == Instrument.FiveFretBass)
+                if (score.Instrument == _selectedInstrument)
                 {
                     int difficulty = (int) score.Difficulty;
                     _scoreDisplays[difficulty].ShowScore(score);
