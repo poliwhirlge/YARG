@@ -40,15 +40,16 @@ namespace YARG.Menu.MusicLibrary
         [SerializeField]
         private GameObject _brutalFcHighlight;
 
-        public void ClearValues(bool hideDifficultyIcon = false)
+        public void ClearValues(bool hide = false)
         {
             _playerName.text = String.Empty;
-            _scoreText.text = String.Empty;
+            _scoreText.text = "-";
             _percentText.text = String.Empty;
             _starView.gameObject.SetActive(false);
             _fcHighlight.SetActive(false);
             _brutalFcHighlight.SetActive(false);
-            _difficultyIcon.gameObject.SetActive(!hideDifficultyIcon);
+
+            gameObject.SetActive(!hide);
         }
 
         public void ShowScore(PlayerScoreRecord scoreRecord)

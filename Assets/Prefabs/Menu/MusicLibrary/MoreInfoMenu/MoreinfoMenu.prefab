@@ -9600,10 +9600,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8698820094085693264, guid: a11897a8154066446a2d40af1639902a, type: 3}
-      propertyPath: m_PreferredHeight
-      value: 57
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10370,10 +10366,6 @@ PrefabInstance:
     - target: {fileID: 7726438009903044018, guid: a11897a8154066446a2d40af1639902a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8698820094085693264, guid: a11897a8154066446a2d40af1639902a, type: 3}
-      propertyPath: m_PreferredHeight
-      value: 57
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11702,10 +11694,6 @@ PrefabInstance:
     - target: {fileID: 7726438009903044018, guid: a11897a8154066446a2d40af1639902a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8698820094085693264, guid: a11897a8154066446a2d40af1639902a, type: 3}
-      propertyPath: m_PreferredHeight
-      value: 57
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13790,11 +13778,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1121126666004639308, guid: 8d66523691e71cd4c9a529b0324dfed2, type: 3}
       propertyPath: m_fontSize
-      value: 18
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1121126666004639308, guid: 8d66523691e71cd4c9a529b0324dfed2, type: 3}
+      propertyPath: m_margin.z
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1121126666004639308, guid: 8d66523691e71cd4c9a529b0324dfed2, type: 3}
       propertyPath: m_fontSizeMax
-      value: 18
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 1121126666004639308, guid: 8d66523691e71cd4c9a529b0324dfed2, type: 3}
       propertyPath: m_fontSizeMin
@@ -13964,7 +13956,7 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 200
+  m_PreferredWidth: 220
   m_PreferredHeight: -1
   m_FlexibleWidth: 0
   m_FlexibleHeight: -1
@@ -14569,10 +14561,6 @@ PrefabInstance:
     - target: {fileID: 7726438009903044018, guid: a11897a8154066446a2d40af1639902a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8698820094085693264, guid: a11897a8154066446a2d40af1639902a, type: 3}
-      propertyPath: m_PreferredHeight
-      value: 57
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15795,10 +15783,6 @@ PrefabInstance:
     - target: {fileID: 7726438009903044018, guid: a11897a8154066446a2d40af1639902a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8698820094085693264, guid: a11897a8154066446a2d40af1639902a, type: 3}
-      propertyPath: m_PreferredHeight
-      value: 57
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

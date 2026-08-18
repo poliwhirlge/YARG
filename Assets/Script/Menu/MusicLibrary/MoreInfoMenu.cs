@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using NUnit.Framework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -101,6 +102,11 @@ namespace YARG.Menu.MusicLibrary
         private          List<Instrument>        _availableInstruments    = new();
         private          int                     _selectedInstrumentIndex = 0;
         private          Instrument              _selectedInstrument      = Instrument.FiveFretGuitar;
+
+        private List<Instrument> _unplayableInstruments = new List<Instrument>()
+        {
+            Instrument.Band
+        };
 
         private void OnEnable()
         {
@@ -310,7 +316,7 @@ namespace YARG.Menu.MusicLibrary
             {
                 Instrument instrument = _allInstruments[i];
 
-                if (_currentSong[instrument].IsActive())
+                if (_currentSong[instrument].IsActive() && !_unplayableInstruments.Contains(instrument))
                 {
                     _availableInstruments.Add(instrument);
                 }
@@ -354,8 +360,19 @@ namespace YARG.Menu.MusicLibrary
         {
             for (int i = 0; i < _scoreDisplays.Length; i++)
             {
-                var hasDifficulty = _currentSong.HasDifficultyForInstrument(_selectedInstrument, _difficulties[i]);
-                _scoreDisplays[i].ClearValues(hideDifficultyIcon: !hasDifficulty);
+                var difficulty = _difficulties[i];
+                var hasDifficulty = false;
+
+                if (_selectedInstrument == Instrument.Vocals || _selectedInstrument == Instrument.Harmony)
+                {
+                    hasDifficulty = difficulty != Difficulty.ExpertPlus;
+                }
+                else
+                {
+                    hasDifficulty = _currentSong.HasDifficultyForInstrument(_selectedInstrument, difficulty);
+                }
+
+                _scoreDisplays[i].ClearValues(hide: !hasDifficulty);
             }
 
             var highScores = ScoreContainer.GetHighScoresForSong(_currentSong.Hash);
