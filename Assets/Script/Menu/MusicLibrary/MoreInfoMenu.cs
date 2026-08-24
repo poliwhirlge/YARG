@@ -135,9 +135,11 @@ namespace YARG.Menu.MusicLibrary
         {
             _songText.text = _currentSong.Name;
             _artistText.text = _currentSong.Artist;
-            _genreText.text = _currentSong.Genre;
             _charterText.text = _currentSong.Charter;
             _sourceText.text = SongSources.SourceToGameName(_currentSong.Source);
+
+            string subgenreText = (string.IsNullOrEmpty(_currentSong.Subgenre)) ? string.Empty : ", <alpha=#69>" +  _currentSong.Subgenre;
+            _genreText.text = _currentSong.Genre.ToString().Trim() + subgenreText;
 
             var songRating = _currentSong.GetSongRating(SettingsManager.Settings.CensorMatureContent.Value);
             _contentRatingText.text = songRating switch
