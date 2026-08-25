@@ -81,6 +81,8 @@ namespace YARG.Menu.MusicLibrary
 
         [Space]
         [SerializeField]
+        private TextMeshProUGUI _displayedScoresInstrument;
+        [SerializeField]
         private HelpBarButton _toggleSoloBandScoresButton;
         [SerializeField]
         private HelpBarButton _toggleInstrumentScoresButton;
@@ -103,16 +105,28 @@ namespace YARG.Menu.MusicLibrary
         private          int                     _selectedInstrumentIndex = 0;
         private          Instrument              _selectedInstrument      = Instrument.FiveFretGuitar;
 
+        /*
+         * Remove instruments from this list as they are made playable.
+         */
         private List<Instrument> _unplayableInstruments = new List<Instrument>()
         {
-            Instrument.Band
+            Instrument.Band,
+            Instrument.EliteDrums,
+            Instrument.ProBass_17Fret,
+            Instrument.ProBass_22Fret,
+            Instrument.ProGuitar_17Fret,
+            Instrument.ProGuitar_22Fret,
+            Instrument.SixFretBass,
+            Instrument.SixFretGuitar,
+            Instrument.SixFretCoopGuitar,
+            Instrument.SixFretRhythm,
         };
 
         private void OnEnable()
         {
             var redEntry = new NavigationScheme.Entry(MenuAction.Red, "Back", () => gameObject.SetActive(false));
             var yellowEntry = new NavigationScheme.Entry(MenuAction.Yellow, "Back", () => gameObject.SetActive(false));
-            var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Blue", CycleInstrument);
+            var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Change Instrument", CycleInstrument);
             Navigator.Instance.PushScheme(new NavigationScheme(new()
             {
                 // NavigationScheme.Entry.NavigateUp,
@@ -138,7 +152,7 @@ namespace YARG.Menu.MusicLibrary
             _charterText.text = _currentSong.Charter;
             _sourceText.text = SongSources.SourceToGameName(_currentSong.Source);
 
-            string subgenreText = (string.IsNullOrEmpty(_currentSong.Subgenre)) ? string.Empty : ", <alpha=#69>" +  _currentSong.Subgenre;
+            string subgenreText = (string.IsNullOrEmpty(_currentSong.Subgenre)) ? string.Empty : ", <alpha=#60>" +  _currentSong.Subgenre;
             _genreText.text = _currentSong.Genre.ToString().Trim() + subgenreText;
 
             var songRating = _currentSong.GetSongRating(SettingsManager.Settings.CensorMatureContent.Value);
@@ -341,7 +355,7 @@ namespace YARG.Menu.MusicLibrary
 
             _selectedInstrument = _availableInstruments[_selectedInstrumentIndex];
 
-            _toggleInstrumentScoresButton.SetButtonLabel(Localize.ToLocalizedName(_selectedInstrument));
+            _displayedScoresInstrument.text = Localize.ToLocalizedName(_selectedInstrument);
         }
 
         private void CycleInstrument()
@@ -354,7 +368,7 @@ namespace YARG.Menu.MusicLibrary
             }
 
             _selectedInstrument = _availableInstruments[_selectedInstrumentIndex];
-            _toggleInstrumentScoresButton.SetButtonLabel(Localize.ToLocalizedName(_selectedInstrument));
+            _displayedScoresInstrument.text = Localize.ToLocalizedName(_selectedInstrument);
             UpdateHighScores();
         }
 
