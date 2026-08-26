@@ -8,12 +8,14 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using YARG.Core;
+using YARG.Core.Game;
 using YARG.Core.Input;
 using YARG.Core.Song;
 using YARG.Core.Utility;
 using YARG.Helpers.Extensions;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
+using YARG.Player;
 using YARG.Scores;
 using YARG.Settings;
 using YARG.Song;
@@ -70,7 +72,9 @@ namespace YARG.Menu.MusicLibrary
                 _percentText.text = $"<mspace=.5em><color={scoreColor}>{Mathf.FloorToInt(scoreRecord.GetPercent() * 100f)}<mspace=1em>%</color></mspace>";
             }
 
-            _playerName.text = $"{scoreRecord.PlayerId}";
+            YargProfile yargProfile = PlayerContainer.GetProfileById(scoreRecord.PlayerId);
+
+            _playerName.text = $"{yargProfile.Name}";
             _scoreText.text = scoreStringBuilder.ToString();
             _starView.gameObject.SetActive(true);
             _starView.SetStars(scoreRecord.Stars);
