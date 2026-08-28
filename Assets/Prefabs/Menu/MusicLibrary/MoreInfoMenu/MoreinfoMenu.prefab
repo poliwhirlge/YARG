@@ -10086,6 +10086,14 @@ PrefabInstance:
       value: Ring34
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -10245,6 +10253,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring17
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -11075,6 +11091,14 @@ PrefabInstance:
       value: Ring15
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -11236,6 +11260,14 @@ PrefabInstance:
       value: Ring27
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -11395,6 +11427,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring36
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -12189,6 +12229,14 @@ PrefabInstance:
       value: Ring16
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -12795,6 +12843,14 @@ PrefabInstance:
       value: Ring14
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -13360,6 +13416,14 @@ PrefabInstance:
       value: Ring21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -13521,6 +13585,14 @@ PrefabInstance:
       value: Ring23
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -13680,6 +13752,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring32
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -14062,6 +14142,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -14472,6 +14560,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -15082,6 +15178,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring22
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -15704,6 +15808,14 @@ PrefabInstance:
       value: Ring37
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -16314,6 +16426,14 @@ PrefabInstance:
       value: Ring12
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -16473,6 +16593,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring33
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -16636,6 +16764,14 @@ PrefabInstance:
       value: Ring35
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -16797,6 +16933,14 @@ PrefabInstance:
       value: Ring13
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -16956,6 +17100,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring26
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -17329,6 +17481,14 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -17488,6 +17648,14 @@ PrefabInstance:
     - target: {fileID: 397774209812536635, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: m_Name
       value: Ring24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 5815463076847458703, guid: 53438a07c6e5ec5409d5bde8514761ca, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
