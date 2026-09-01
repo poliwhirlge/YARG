@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using NUnit.Framework;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using YARG.Core;
 using YARG.Core.Input;
 using YARG.Core.Song;
-using YARG.Core.Utility;
 using YARG.Helpers.Extensions;
 using YARG.Localization;
 using YARG.Menu.Navigation;
@@ -18,7 +15,6 @@ using YARG.Menu.Persistent;
 using YARG.Scores;
 using YARG.Settings;
 using YARG.Song;
-using static System.Globalization.CultureInfo;
 
 namespace YARG.Menu.MusicLibrary
 {
@@ -92,6 +88,10 @@ namespace YARG.Menu.MusicLibrary
         [Space]
         [SerializeField]
         private Sprite[] _allContentRatingIcons;
+
+        [Space]
+        [SerializeField]
+        private NavigationGroup _menuNavigationGroup;
 
 
         private          SongEntry               _currentSong;
