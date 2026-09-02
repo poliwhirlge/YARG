@@ -4673,10 +4673,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7792aa537b804208a803f971074a1a45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::YARG.Menu.Navigation.NavigationGroup
-  _defaultGroup: 0
+  _defaultGroup: 1
   _canBeCurrent: 1
   _addAllChildrenOnAwake: 1
-  _selectFirst: 0
+  _selectFirst: 1
 --- !u!1 &4918511637434740495
 GameObject:
   m_ObjectHideFlags: 0
@@ -8792,6 +8792,9 @@ MonoBehaviour:
   - {fileID: 1975822979, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
   - {fileID: -1194512660, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
   - {fileID: 22296138, guid: d654eff7c3ab0b04a8e5c22100a037fe, type: 3}
+  _menuNavigationGroup: {fileID: 3562565273823949754}
+  _playButton: {fileID: 2430581628854561082}
+  _practiceButton: {fileID: 6327665827702176648}
 --- !u!223 &997589972612845782
 Canvas:
   m_ObjectHideFlags: 0
@@ -11014,6 +11017,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 341697bf09a727549a7c8bba6d844c34, type: 3}
+--- !u!114 &6327665827702176648 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6430633741133489088, guid: 341697bf09a727549a7c8bba6d844c34, type: 3}
+  m_PrefabInstance: {fileID: 1075887359636527176}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 415519b8353a4d0589628d2259ed63a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YARG.Menu.Navigation.NavigatableButton
 --- !u!224 &6345819072983501637 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6268642384488387341, guid: 341697bf09a727549a7c8bba6d844c34, type: 3}
@@ -17412,6 +17426,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 341697bf09a727549a7c8bba6d844c34, type: 3}
+--- !u!114 &2430581628854561082 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6430633741133489088, guid: 341697bf09a727549a7c8bba6d844c34, type: 3}
+  m_PrefabInstance: {fileID: 8684376370535484154}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 415519b8353a4d0589628d2259ed63a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YARG.Menu.Navigation.NavigatableButton
 --- !u!224 &3349459061307546103 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6268642384488387341, guid: 341697bf09a727549a7c8bba6d844c34, type: 3}

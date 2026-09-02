@@ -12,6 +12,7 @@ using YARG.Helpers.Extensions;
 using YARG.Localization;
 using YARG.Menu.Navigation;
 using YARG.Menu.Persistent;
+using YARG.Player;
 using YARG.Scores;
 using YARG.Settings;
 using YARG.Song;
@@ -92,6 +93,10 @@ namespace YARG.Menu.MusicLibrary
         [Space]
         [SerializeField]
         private NavigationGroup _menuNavigationGroup;
+        [SerializeField]
+        private NavigatableButton _playButton;
+        [SerializeField]
+        private NavigatableButton _practiceButton;
 
 
         private          SongEntry               _currentSong;
@@ -122,6 +127,30 @@ namespace YARG.Menu.MusicLibrary
             Instrument.SixFretRhythm,
         };
 
+        private void Awake()
+        {
+            _playButton.SetOnClickEvent(Play);
+            _practiceButton.SetOnClickEvent(Practice);
+        }
+
+        private void Play()
+        {
+            if (PlayerContainer.Players.Count <= 0) return;
+
+            GlobalVariables.State.IsPractice = false;
+            GlobalVariables.State.CurrentSong = _currentSong;
+            MenuManager.Instance.PushMenu(MenuManager.Menu.DifficultySelect);
+        }
+
+        private void Practice()
+        {
+            if (PlayerContainer.Players.Count <= 0) return;
+
+            GlobalVariables.State.IsPractice = true;
+            GlobalVariables.State.CurrentSong = _currentSong;
+            MenuManager.Instance.PushMenu(MenuManager.Menu.DifficultySelect);
+        }
+
         private void OnEnable()
         {
             var redEntry = new NavigationScheme.Entry(MenuAction.Red, "Back", () => gameObject.SetActive(false));
@@ -129,8 +158,8 @@ namespace YARG.Menu.MusicLibrary
             var blueEntry = new NavigationScheme.Entry(MenuAction.Blue, "Change Instrument", CycleInstrument);
             Navigator.Instance.PushScheme(new NavigationScheme(new()
             {
-                // NavigationScheme.Entry.NavigateUp,
-                // NavigationScheme.Entry.NavigateDown,
+                NavigationScheme.Entry.NavigateUp,
+                NavigationScheme.Entry.NavigateDown,
                 // NavigationScheme.Entry.NavigateSelect,
                 redEntry,
                 yellowEntry,
@@ -256,6 +285,8 @@ namespace YARG.Menu.MusicLibrary
             UpdateAvailableInstruments();
             UpdateInstrumentSelection();
             UpdateHighScores();
+
+            _menuNavigationGroup.SelectFirst();
         }
 
         private void UpdateIntensityIcons()
