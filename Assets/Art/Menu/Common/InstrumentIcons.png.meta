@@ -462,7 +462,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: rhythm6f
+      name: rhythm6
       rect:
         serializedVersion: 2
         x: 0
@@ -484,7 +484,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: guitarCoop6f
+      name: coop6
       rect:
         serializedVersion: 2
         x: 512
@@ -506,7 +506,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: guitar6f
+      name: guitar6
       rect:
         serializedVersion: 2
         x: 1024
@@ -528,7 +528,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: bass6f
+      name: bass6
       rect:
         serializedVersion: 2
         x: 1532
@@ -641,16 +641,16 @@ TextureImporter:
       InstrumentIcons_7: -1338306158
       band: -2104244439
       bass: 1530186425
-      bass6f: 317869150
+      bass6: 317869150
+      coop6: 684205679
       dj: -179659587
       drums: 678366802
       eliteDrums: 1405555635
       eliteKeys: -1877322649
       ghDrums: -768334538
       guitar: -480311375
-      guitar6f: -1812552846
+      guitar6: -1812552846
       guitarCoop: 1095511443
-      guitarCoop6f: 684205679
       harmVocals: -871424490
       keys: 1353769368
       keys6l: -935092549
@@ -659,7 +659,7 @@ TextureImporter:
       realGuitar: 1095511443
       realKeys: 1095511443
       rhythm: -413506960
-      rhythm6f: -1418828745
+      rhythm6: -1418828745
       twoVocals: -2070950562
       vocals: 1095511443
   mipmapLimitGroupName: 

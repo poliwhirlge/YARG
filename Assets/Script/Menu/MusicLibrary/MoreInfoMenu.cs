@@ -346,13 +346,13 @@ namespace YARG.Menu.MusicLibrary
             _difficultyRings[13].gameObject.SetActive(false);
 
             // Row 3
-            _difficultyRings[14].SetInfo("guitar6f", Instrument.SixFretGuitar, _currentSong[Instrument.SixFretGuitar]);
-            _difficultyRings[15].SetInfo("bass6f", Instrument.SixFretBass, _currentSong[Instrument.SixFretBass]);
+            _difficultyRings[14].SetInfo("guitar6", Instrument.SixFretGuitar, _currentSong[Instrument.SixFretGuitar]);
+            _difficultyRings[15].SetInfo("bass6", Instrument.SixFretBass, _currentSong[Instrument.SixFretBass]);
             _difficultyRings[16].SetInfo("ghDrums", Instrument.FiveLaneDrums, _currentSong[Instrument.FiveLaneDrums]);
             _difficultyRings[17].gameObject.SetActive(false);
             _difficultyRings[18].gameObject.SetActive(false);
-            _difficultyRings[19].SetInfo("rhythm6f", Instrument.SixFretRhythm, _currentSong[Instrument.SixFretRhythm]);
-            _difficultyRings[20].SetInfo("guitarCoop6f", Instrument.SixFretCoopGuitar, _currentSong[Instrument.SixFretCoopGuitar]);
+            _difficultyRings[19].SetInfo("rhythm6", Instrument.SixFretRhythm, _currentSong[Instrument.SixFretRhythm]);
+            _difficultyRings[20].SetInfo("coop6", Instrument.SixFretCoopGuitar, _currentSong[Instrument.SixFretCoopGuitar]);
         }
 
         private void UpdateAvailableInstruments()
